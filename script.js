@@ -1,3 +1,7 @@
+let categoryCounter = 0;
+const nCategories = 19;
+const categories = [];
+
 const queryMainCategories = `
     #+ summary: Get titles meestvoorkomende catogrieen
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -77,13 +81,19 @@ const fetchMaterialPerCategoryEach = categoriesTermaster => {
       'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
       queryCategories,
       category,
-      cleanMaterialPerCategory
+      handleFetchMaterialPerCategory
     );
   });
 };
 
-function cleanMaterialPerCategory(data, category) {
-  const cleanData = {
+const handleFetchMaterialPerCategory = (data, category) => {
+  categoryCounter++;
+  categories.push(normalizeMaterialPerCategory(data, category));
+  if (categoryCounter >= nCategories) console.log(categories);
+};
+
+const normalizeMaterialPerCategory = (data, category) => {
+  return {
     name: category.name,
     material: data.results.bindings.map(i => {
       return {
@@ -92,5 +102,4 @@ function cleanMaterialPerCategory(data, category) {
       };
     })
   };
-  console.log(cleanData);
-}
+};
