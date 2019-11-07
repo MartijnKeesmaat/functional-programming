@@ -16,6 +16,25 @@ const queryMainCategories = `
     ORDER BY DESC(?objCount)
   `;
 
+const queryMaterialPerCategory = (querySrc, query, category, responseFn) => {
+  fetch(`${querySrc}?query=${encodeURIComponent(query)}&format=json`)
+    .then(res => res.json())
+    .then(data => responseFn(data, category));
+};
+
+queryMaterialPerCategory(
+  'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
+  queryMainCategories,
+  '',
+  fetchCategoriesFromSPARQL
+);
+
+function fetchCategoriesFromSPARQL(data) {
+  const categories = getCategoriesFromData(data);
+  fetchMaterialPerCategoryFromSPARQL(categories);
+}
+
+/*  
 (function fetchCategoriesFromSPARQL() {
   fetch(
     `https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql?query=${encodeURIComponent(
@@ -23,9 +42,10 @@ const queryMainCategories = `
     )}&format=json`
   )
     .then(res => res.json())
-    .then(data => getCategoriesFromData(data))
+    .then(data => )
     .then(categories => fetchMaterialPerCategoryFromSPARQL(categories));
 })();
+*/
 
 const getCategoriesFromData = data => {
   return data.results.bindings.map(i => {
@@ -68,12 +88,6 @@ function fetchMaterialPerCategoryFromSPARQL(categoriesTermaster) {
     );
   });
 }
-
-const queryMaterialPerCategory = (querySrc, query, category, responseFn) => {
-  fetch(`${querySrc}?query=${encodeURIComponent(query)}&format=json`)
-    .then(res => res.json())
-    .then(data => responseFn(data, category));
-};
 
 function cleanMaterialPerCategory(data, category) {
   console.log(data.results.bindings);
