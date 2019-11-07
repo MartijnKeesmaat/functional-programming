@@ -1,6 +1,3 @@
-const queryUrl =
-  'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql';
-
 const queryMainCategories = `
     #+ summary: Get titles meestvoorkomende catogrieen
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -21,7 +18,9 @@ const queryMainCategories = `
 
 (function fetchCategoriesFromSPARQL() {
   fetch(
-    `${queryUrl}?query=${encodeURIComponent(queryMainCategories)}&format=json`
+    `https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql?query=${encodeURIComponent(
+      queryMainCategories
+    )}&format=json`
   )
     .then(res => res.json())
     .then(data => getCategoriesFromData(data))
@@ -61,39 +60,44 @@ function fetchMaterialPerCategoryFromSPARQL(categoriesTermaster) {
       ORDER BY DESC(?choCount)
       LIMIT 5
     `;
-    queryMaterialPerCategory(query, category);
+    queryMaterialPerCategory(
+      'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
+      query,
+      category,
+      cleanMaterialPerCategory
+    );
   });
 }
 
-const queryMaterialPerCategory = (query, category) => {
-  fetch(`${queryUrl}?query=${encodeURIComponent(query)}&format=json`)
+const queryMaterialPerCategory = (querySrc, query, category, responseFn) => {
+  fetch(`${querySrc}?query=${encodeURIComponent(query)}&format=json`)
     .then(res => res.json())
-    .then(data =>
-      createArray({
-        name: category.name,
-        material: data.results.bindings
-      })
-    );
+    .then(data => responseFn(data, category));
 };
 
-let dataArr = [];
-const createArray = data => {
-  dataArr.push(data);
-  if (dataArr.length >= 19) renderDOM();
-};
+function cleanMaterialPerCategory(data, category) {
+  console.log(data.results.bindings);
+  console.log(category);
+}
 
-const renderDOM = () => {
-  console.log(dataArr);
+// let dataArr = [];
+// const createArray = data => {
+//   dataArr.push(data);
+//   if (dataArr.length >= 19) renderDOM();
+// };
 
-  const list = document.querySelector('ul');
-  dataArr.forEach(i => {
-    const item = document.createElement('h3');
-    item.textContent = i.name;
-    list.appendChild(item);
-    i.material.forEach(j => {
-      const item2 = document.createElement('li');
-      item2.textContent = `${j.materiaalLabel.value}, ${j.choCount.value}`;
-      list.appendChild(item2);
-    });
-  });
-};
+// const renderDOM = () => {
+//   console.log(dataArr);
+
+//   const list = document.querySelector('ul');
+//   dataArr.forEach(i => {
+//     const item = document.createElement('h3');
+//     item.textContent = i.name;
+//     list.appendChild(item);
+//     i.material.forEach(j => {
+//       const item2 = document.createElement('li');
+//       item2.textContent = `${j.materiaalLabel.value}, ${j.choCount.value}`;
+//       list.appendChild(item2);
+//     });
+//   });
+// };
