@@ -27,17 +27,17 @@ const fetchMaterialPerCategory = (
     .then(data => responseFn(data, outsideScope));
 };
 
+const handleDataMaterialPerCategory = data => {
+  const categories = getCategoriesFromData(data);
+  fetchMaterialPerCategoryEach(categories);
+};
+
 fetchMaterialPerCategory(
   'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
   queryMainCategories,
   '',
-  hanleDataMaterialPerCategory
+  handleDataMaterialPerCategory
 );
-
-function hanleDataMaterialPerCategory(data) {
-  const categories = getCategoriesFromData(data);
-  fetchMaterialPerCategoryEach(categories);
-}
 
 const getCategoriesFromData = data => {
   return data.results.bindings.map(i => {
@@ -49,7 +49,7 @@ const getCategoriesFromData = data => {
   });
 };
 
-function fetchMaterialPerCategoryEach(categoriesTermaster) {
+const fetchMaterialPerCategoryEach = categoriesTermaster => {
   categoriesTermaster.forEach(category => {
     const queryCategories = `
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -80,9 +80,17 @@ function fetchMaterialPerCategoryEach(categoriesTermaster) {
       cleanMaterialPerCategory
     );
   });
-}
+};
 
 function cleanMaterialPerCategory(data, category) {
-  console.log(data.results.bindings);
-  console.log(category);
+  const cleanData = {
+    name: category.name,
+    material: data.results.bindings.map(i => {
+      return {
+        name: i.materiaalLabel.value,
+        value: Number(i.choCount.value)
+      };
+    })
+  };
+  console.log(cleanData);
 }
