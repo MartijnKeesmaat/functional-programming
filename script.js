@@ -24,11 +24,11 @@ const queryMainCategories = `
     `${queryUrl}?query=${encodeURIComponent(queryMainCategories)}&format=json`
   )
     .then(res => res.json())
-    .then(data => getMaterialPerCategory(data))
+    .then(data => getCategoriesFromData(data))
     .then(categories => fetchMaterialPerCategoryFromSPARQL(categories));
 })();
 
-const getMaterialPerCategory = data => {
+const getCategoriesFromData = data => {
   return data.results.bindings.map(i => {
     return {
       termmaster: `<${i.category.value}>`,
@@ -61,19 +61,20 @@ function fetchMaterialPerCategoryFromSPARQL(categoriesTermaster) {
       ORDER BY DESC(?choCount)
       LIMIT 5
     `;
-
-    (function runQuery() {
-      fetch(`${queryUrl}?query=${encodeURIComponent(query)}&format=json`)
-        .then(res => res.json())
-        .then(data =>
-          createArray({
-            name: category.name,
-            material: data.results.bindings
-          })
-        );
-    })();
+    queryMaterialPerCategory(query, category);
   });
 }
+
+const queryMaterialPerCategory = (query, category) => {
+  fetch(`${queryUrl}?query=${encodeURIComponent(query)}&format=json`)
+    .then(res => res.json())
+    .then(data =>
+      createArray({
+        name: category.name,
+        material: data.results.bindings
+      })
+    );
+};
 
 let dataArr = [];
 const createArray = data => {
