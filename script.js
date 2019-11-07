@@ -16,36 +16,28 @@ const queryMainCategories = `
     ORDER BY DESC(?objCount)
   `;
 
-const queryMaterialPerCategory = (querySrc, query, category, responseFn) => {
+const fetchMaterialPerCategory = (
+  querySrc,
+  query,
+  outsideScope,
+  responseFn
+) => {
   fetch(`${querySrc}?query=${encodeURIComponent(query)}&format=json`)
     .then(res => res.json())
-    .then(data => responseFn(data, category));
+    .then(data => responseFn(data, outsideScope));
 };
 
-queryMaterialPerCategory(
+fetchMaterialPerCategory(
   'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
   queryMainCategories,
   '',
-  fetchCategoriesFromSPARQL
+  hanleDataMaterialPerCategory
 );
 
-function fetchCategoriesFromSPARQL(data) {
+function hanleDataMaterialPerCategory(data) {
   const categories = getCategoriesFromData(data);
-  fetchMaterialPerCategoryFromSPARQL(categories);
+  fetchMaterialPerCategoryEach(categories);
 }
-
-/*  
-(function fetchCategoriesFromSPARQL() {
-  fetch(
-    `https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql?query=${encodeURIComponent(
-      queryMainCategories
-    )}&format=json`
-  )
-    .then(res => res.json())
-    .then(data => )
-    .then(categories => fetchMaterialPerCategoryFromSPARQL(categories));
-})();
-*/
 
 const getCategoriesFromData = data => {
   return data.results.bindings.map(i => {
@@ -57,9 +49,9 @@ const getCategoriesFromData = data => {
   });
 };
 
-function fetchMaterialPerCategoryFromSPARQL(categoriesTermaster) {
+function fetchMaterialPerCategoryEach(categoriesTermaster) {
   categoriesTermaster.forEach(category => {
-    const query = `
+    const queryCategories = `
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX dc: <http://purl.org/dc/elements/1.1/>
       PREFIX dct: <http://purl.org/dc/terms/>
@@ -80,9 +72,10 @@ function fetchMaterialPerCategoryFromSPARQL(categoriesTermaster) {
       ORDER BY DESC(?choCount)
       LIMIT 5
     `;
-    queryMaterialPerCategory(
+
+    fetchMaterialPerCategory(
       'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
-      query,
+      queryCategories,
       category,
       cleanMaterialPerCategory
     );
@@ -93,25 +86,3 @@ function cleanMaterialPerCategory(data, category) {
   console.log(data.results.bindings);
   console.log(category);
 }
-
-// let dataArr = [];
-// const createArray = data => {
-//   dataArr.push(data);
-//   if (dataArr.length >= 19) renderDOM();
-// };
-
-// const renderDOM = () => {
-//   console.log(dataArr);
-
-//   const list = document.querySelector('ul');
-//   dataArr.forEach(i => {
-//     const item = document.createElement('h3');
-//     item.textContent = i.name;
-//     list.appendChild(item);
-//     i.material.forEach(j => {
-//       const item2 = document.createElement('li');
-//       item2.textContent = `${j.materiaalLabel.value}, ${j.choCount.value}`;
-//       list.appendChild(item2);
-//     });
-//   });
-// };
