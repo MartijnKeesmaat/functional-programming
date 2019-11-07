@@ -19,29 +19,27 @@ const queryMainCategories = `
     ORDER BY DESC(?objCount)
   `;
 
-(function getMainCategories() {
+(function fetchCategoriesFromSPARQL() {
   fetch(
-    queryUrl +
-      '?query=' +
-      encodeURIComponent(queryMainCategories) +
-      '&format=json'
+    `${queryUrl}?query=${encodeURIComponent(queryMainCategories)}&format=json`
   )
     .then(res => res.json())
-    .then(data => data.results.bindings)
-    .then(data => {
-      return data.map(i => {
-        return {
-          termmaster: `<${i.category.value}>`,
-          name: i.categoryLabel.value,
-          value: i.objCount.value
-        };
-      });
-    })
-    .then(iets => getMaterialPerCategory(iets));
+    .then(data => getMaterialPerCategory(data))
+    .then(categories => fetchMaterialPerCategoryFromSPARQL(categories));
 })();
 
-function getMaterialPerCategory(categoriesTermaster) {
-  categoriesTermaster.forEach((item, i) => {
+const getMaterialPerCategory = data => {
+  return data.results.bindings.map(i => {
+    return {
+      termmaster: `<${i.category.value}>`,
+      name: i.categoryLabel.value,
+      value: i.objCount.value
+    };
+  });
+};
+
+function fetchMaterialPerCategoryFromSPARQL(categoriesTermaster) {
+  categoriesTermaster.forEach(category => {
     const query = `
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX dc: <http://purl.org/dc/elements/1.1/>
@@ -52,7 +50,7 @@ function getMaterialPerCategory(categoriesTermaster) {
       # tel aantallen per materiaal
       SELECT ?subcategorie ?materiaalLabel (COUNT(?cho) AS ?choCount) WHERE {
       # haal van een term in de thesaurus de subcategorieen op
-      ${categoriesTermaster[i].termmaster} skos:narrower* ?subcategorie .
+      ${category.termmaster} skos:narrower* ?subcategorie .
       # haal de objecten van deze subcategorieen en het materiaal
       ?cho edm:isRelatedTo ?subcategorie .
       ?cho dct:medium ?materiaal .
@@ -65,11 +63,11 @@ function getMaterialPerCategory(categoriesTermaster) {
     `;
 
     (function runQuery() {
-      fetch(queryUrl + '?query=' + encodeURIComponent(query) + '&format=json')
+      fetch(`${queryUrl}?query=${encodeURIComponent(query)}&format=json`)
         .then(res => res.json())
         .then(data =>
           createArray({
-            name: categoriesTermaster[i].name,
+            name: category.name,
             material: data.results.bindings
           })
         );
@@ -84,10 +82,17 @@ const createArray = data => {
 };
 
 const renderDOM = () => {
+  console.log(dataArr);
+
   const list = document.querySelector('ul');
   dataArr.forEach(i => {
-    const item = document.createElement('li');
+    const item = document.createElement('h3');
     item.textContent = i.name;
     list.appendChild(item);
+    i.material.forEach(j => {
+      const item2 = document.createElement('li');
+      item2.textContent = `${j.materiaalLabel.value}, ${j.choCount.value}`;
+      list.appendChild(item2);
+    });
   });
 };
