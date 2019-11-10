@@ -34,6 +34,6 @@ query
 - [Sketch template](https://www.ls.graphics/charts)
 - [Nadieh Bremer Skillshare coutrse](https://www.skillshare.com/classes/Data-Visualization-Customizing-Charts-for-Beauty-Impact/84030568/projects)
 - [@dandevri](https://github.com/dandevri) for recommending the course
-- [Bar chart scribber](http://bl.ocks.org/nbremer/4c015860931fb6a13afc7bac51f40b43)
+- [Brushable bar chart](http://bl.ocks.org/nbremer/4c015860931fb6a13afc7bac51f40b43)
 - [Color palette inspiration](https://colorhunt.co/palette/361)
 
