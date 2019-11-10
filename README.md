@@ -30,4 +30,10 @@ query
 
 ## Acknowledgments
 - [The NMVW org.](https://collectie.wereldculturen.nl/), for hosting us and prodiving the data
+- [D3 dashboard](http://bl.ocks.org/NPashaP/96447623ef4d342ee09b)
+- [Sketch template](https://www.ls.graphics/charts)
+- [Nadieh Bremer Skillshare coutrse](https://www.skillshare.com/classes/Data-Visualization-Customizing-Charts-for-Beauty-Impact/84030568/projects)
+- [@dandevri](https://github.com/dandevri) for recommending the course
+- [Bar chart scribber](http://bl.ocks.org/nbremer/4c015860931fb6a13afc7bac51f40b43)
+- [Color palette inspiration](https://colorhunt.co/palette/361)
 
