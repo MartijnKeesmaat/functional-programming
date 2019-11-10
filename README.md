@@ -6,6 +6,8 @@ In functional programming (fp) you learn how to create visualisations from exter
 
 --- CONCEPT INTRO HERE ---
 
+![](https://github.com/MartijnKeesmaat/functional-programming/blob/master/design/dashboard-design.jpg?raw=true)
+
 ## Demo
 See the the live demo [ADD LINK](-)
 
