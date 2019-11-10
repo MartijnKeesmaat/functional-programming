@@ -22,12 +22,7 @@ const queryMainCategories = `
   ORDER BY DESC(?objCount)
 `;
 
-const fetchMaterialPerCategory = (
-  querySrc,
-  query,
-  outsideScope,
-  responseFn
-) => {
+const fetchDataFromQuery = (querySrc, query, outsideScope, responseFn) => {
   fetch(`${querySrc}?query=${encodeURIComponent(query)}&format=json`)
     .then(res => res.json())
     .then(data => responseFn(data, outsideScope));
@@ -38,7 +33,7 @@ const handleDataMaterialPerCategory = data => {
   fetchMaterialPerCategoryEach(categories);
 };
 
-fetchMaterialPerCategory(
+fetchDataFromQuery(
   'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
   queryMainCategories,
   '',
@@ -79,7 +74,7 @@ const fetchMaterialPerCategoryEach = categoriesTermaster => {
         LIMIT 5
       `;
 
-    fetchMaterialPerCategory(
+    fetchDataFromQuery(
       'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
       queryCategories,
       category,
@@ -91,7 +86,7 @@ const fetchMaterialPerCategoryEach = categoriesTermaster => {
 const handleFetchMaterialPerCategory = (data, category) => {
   categoryCounter++;
   categories.push(normalizeMaterialPerCategory(data, category));
-  if (categoryCounter >= nCategories) console.log(categories);
+  if (categoryCounter >= nCategories) doSomething(categories);
 };
 
 const normalizeMaterialPerCategory = (data, category) => {
@@ -106,3 +101,48 @@ const normalizeMaterialPerCategory = (data, category) => {
     })
   };
 };
+
+function doSomething(categories) {
+  console.log(categories);
+  const w = 800;
+  const h = 500;
+  const padding = 60;
+
+  const xScale = d3
+    .scaleLinear()
+    .domain([0, d3.max(categories, d => d.value)])
+    .range([padding, w - padding]);
+
+  const yScale = d3
+    .scaleLinear()
+    .domain([0, d3.max(categories, d => d.value)])
+    .range([h - padding, padding]);
+
+  const svg = d3
+    .select('body')
+    .append('svg')
+    .attr('width', w)
+    .attr('height', h);
+
+  svg
+    .selectAll('rect')
+    .data(categories)
+    .enter()
+    .append('rect')
+    .attr('x', (d, i) => i * 30)
+    .attr('y', (d, i) => h - yScale(d.value))
+    .attr('width', 25)
+    .attr('height', d => yScale(d.value))
+    .attr('fill', 'pink')
+    .attr('class', 'bar');
+
+  svg
+    .selectAll('text')
+    .data(categories)
+    .enter()
+    .append('text')
+    .text(d => d.value)
+    .attr('x', (d, i) => i * 25)
+    .attr('y', d => h);
+  // .attr('transform', d => `rotate(-90) translate(-${h})`);
+}
