@@ -38,4 +38,4 @@ query
 - [@dandevri](https://github.com/dandevri) for recommending the course
 - [Brushable bar chart](http://bl.ocks.org/nbremer/4c015860931fb6a13afc7bac51f40b43)
 - [Color palette inspiration](https://colorhunt.co/palette/361)
-
+- [FreeCodeCamp, data visualization](https://www.freecodecamp.org/learn/data-visualization)
