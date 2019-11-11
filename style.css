@@ -1,0 +1,34 @@
+/* grey: "#EDF0F4",
+purple: "#6A2C70" */
+
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+
+  font-family: Helvetica, sans-serif;
+}
+
+.bar {
+  border-radius: 5px;
+
+  fill: #edf0f4;
+}
+
+svg rect:first-child {
+  fill: #6A2C70;
+}
+
+svg {
+  margin-left: 100px;
+}
+
+.label {
+  width: 100px;
+
+  text-align: right;
+}
+
+.label:first-letter {
+  text-transform: uppercase;
+}

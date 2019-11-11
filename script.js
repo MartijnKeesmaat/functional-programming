@@ -34,9 +34,9 @@ const handleDataMaterialPerCategory = data => {
 };
 
 fetchDataFromQuery(
-  'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
+  "https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql",
   queryMainCategories,
-  '',
+  "",
   handleDataMaterialPerCategory
 );
 
@@ -75,7 +75,7 @@ const fetchMaterialPerCategoryEach = categoriesTermaster => {
       `;
 
     fetchDataFromQuery(
-      'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql',
+      "https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-20/sparql",
       queryCategories,
       category,
       handleFetchMaterialPerCategory
@@ -102,47 +102,72 @@ const normalizeMaterialPerCategory = (data, category) => {
   };
 };
 
+const colors = {
+  grey: "#EDF0F4",
+  purple: "#6A2C70"
+};
+
 function doSomething(categories) {
-  console.log(categories);
-  const w = 800;
-  const h = 500;
+  const categoriesV1 = categories.slice(0, 5);
+  console.log(categoriesV1);
+
+  const w = 600;
+  const h = 280;
   const padding = 60;
 
   const xScale = d3
     .scaleLinear()
-    .domain([0, d3.max(categories, d => d.value)])
+    .domain([0, d3.max(categoriesV1, d => d.value)])
     .range([padding, w - padding]);
+
+  const blabla = d3.scaleBand().rangeRound([0, w])
+
 
   const yScale = d3
     .scaleLinear()
-    .domain([0, d3.max(categories, d => d.value)])
+    .domain([0, d3.max(categoriesV1, d => d.value)])
     .range([h - padding, padding]);
 
   const svg = d3
-    .select('body')
-    .append('svg')
-    .attr('width', w)
-    .attr('height', h);
+    .select("body")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h);
 
   svg
-    .selectAll('rect')
-    .data(categories)
+    .selectAll("rect")
+    .data(categoriesV1)
     .enter()
-    .append('rect')
-    .attr('x', (d, i) => i * 30)
-    .attr('y', (d, i) => h - yScale(d.value))
-    .attr('width', 25)
-    .attr('height', d => yScale(d.value))
-    .attr('fill', 'pink')
-    .attr('class', 'bar');
+    .append("rect")
+    .attr("x", (d, i) => 0)
+    .attr("y", (d, i) => i * 50)
+    .attr("width", d => xScale(d.value))
+    .attr("height", 15)
+    .attr("class", "bar")
+    .attr("rx", 15 / 2) //height / 2
+
+  var x = d3.scaleBand()
+    .range([0, w])
+    .paddingInner(.1)
+    .paddingOuter(.3)
 
   svg
-    .selectAll('text')
-    .data(categories)
+    .selectAll("text")
+    .data(categoriesV1)
     .enter()
-    .append('text')
-    .text(d => d.value)
-    .attr('x', (d, i) => i * 25)
-    .attr('y', d => h);
-  // .attr('transform', d => `rotate(-90) translate(-${h})`);
+    .append("text")
+    .text(d => d.name)
+    .attr("x", (d, i) => 0)
+    .attr("y", (d, i) => (i * 50) + 14)
+    .attr("class", "label")
+
+  const xAxis = d3.axisBottom(xScale);
+  svg.append("g")
+    .attr("transform", "translate(0," + (h - padding) + ")")
+    .attr("color", '#9AA1A9')
+    .call(xAxis)
+    .call(g => g.select(".domain").remove())
+
+
+
 }
