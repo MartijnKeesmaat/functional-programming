@@ -20,6 +20,7 @@ svg rect:first-child {
 }
 
 svg {
+  margin-top: 100px;
   margin-left: 100px;
 }
 
@@ -27,8 +28,22 @@ svg {
   width: 100px;
 
   text-align: right;
+
+  font-size: 10px;
+
+  fill: #505D6F;
 }
 
 .label:first-letter {
   text-transform: uppercase;
+}
+
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
 }

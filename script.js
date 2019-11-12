@@ -113,20 +113,12 @@ function doSomething(categories) {
 
   const w = 600;
   const h = 280;
-  const padding = 60;
+  const padding = 50;
 
   const xScale = d3
     .scaleLinear()
     .domain([0, d3.max(categoriesV1, d => d.value)])
     .range([padding, w - padding]);
-
-  const blabla = d3.scaleBand().rangeRound([0, w])
-
-
-  const yScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(categoriesV1, d => d.value)])
-    .range([h - padding, padding]);
 
   const svg = d3
     .select("body")
@@ -139,17 +131,12 @@ function doSomething(categories) {
     .data(categoriesV1)
     .enter()
     .append("rect")
-    .attr("x", (d, i) => 0)
+    .attr("x", (d, i) => 100)
     .attr("y", (d, i) => i * 50)
-    .attr("width", d => xScale(d.value))
+    .attr("width", d => xScale(d.value) - 50)
     .attr("height", 15)
     .attr("class", "bar")
     .attr("rx", 15 / 2) //height / 2
-
-  var x = d3.scaleBand()
-    .range([0, w])
-    .paddingInner(.1)
-    .paddingOuter(.3)
 
   svg
     .selectAll("text")
@@ -158,16 +145,42 @@ function doSomething(categories) {
     .append("text")
     .text(d => d.name)
     .attr("x", (d, i) => 0)
-    .attr("y", (d, i) => (i * 50) + 14)
+    .attr("y", (d, i) => (i * 50) + 10)
     .attr("class", "label")
+    .attr("dy", 0)//set the dy here
+    .attr("text-anchor", "end")
+    .attr("transform", "translate(90," + 0 + ")")
+    .call(wrap, 100);
 
-  const xAxis = d3.axisBottom(xScale);
+  const xAxis = d3.axisBottom(xScale).ticks(3);
   svg.append("g")
-    .attr("transform", "translate(0," + (h - padding) + ")")
+    .attr("transform", "translate(55," + (h - padding) + ")")
     .attr("color", '#9AA1A9')
     .call(xAxis)
     .call(g => g.select(".domain").remove())
 
-
-
+  // https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
+  function wrap(text, width) {
+    text.each(function () {
+      var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em")
+      while (word = words.pop()) {
+        line.push(word)
+        tspan.text(line.join(" "))
+        if (tspan.node().getComputedTextLength() > width) {
+          line.pop()
+          tspan.text(line.join(" "))
+          line = [word]
+          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
+        }
+      }
+    })
+  }
 }
