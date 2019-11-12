@@ -1,4 +1,4 @@
-import renderBarChart from 'renderBarChart.js'
+import renderBarChart from './renderBarChart.js'
 
 let categoryCounter = 0;
 const nCategories = 19;
@@ -199,27 +199,3 @@ function renderDonutChart(categories) {
 }
 
 
-// https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
-function wrap(text, width) {
-  text.each(function () {
-    let text = d3.select(this),
-      words = text.text().split(/\s+/).reverse(),
-      word,
-      line = [],
-      lineNumber = 0,
-      lineHeight = 1.1, // ems
-      y = text.attr("y"),
-      dy = parseFloat(text.attr("dy")),
-      tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em")
-    while (word = words.pop()) {
-      line.push(word)
-      tspan.text(line.join(" "))
-      if (tspan.node().getComputedTextLength() > width) {
-        line.pop()
-        tspan.text(line.join(" "))
-        line = [word]
-        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
-      }
-    }
-  })
-}

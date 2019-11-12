@@ -1,7 +1,7 @@
 export default function renderBarChart(categories, width, height) {
   const padding = 50;
   const svg = addGlobalSVGBarChart(width, height);
-  const xScale = addXScaleBarChart(width, padding);
+  const xScale = addXScaleBarChart(width, padding, categories);
   addBarsToBarChart(xScale, svg, categories);
   addLabelsToBarChart(svg, categories);
   addXAxisToBarChart(svg, height, padding, xScale);
@@ -16,7 +16,7 @@ const addGlobalSVGBarChart = (width, height) => {
     .attr("height", height);
 }
 
-const addXScaleBarChart = (width, padding) => {
+const addXScaleBarChart = (width, padding, categories) => {
   return d3
     .scaleLinear()
     .domain([0, d3.max(categories, d => d.value)])
@@ -53,7 +53,7 @@ const addLabelsToBarChart = (svg, categories) => {
     .call(wrap, 100);
 }
 
-const addXAxisToBarChart = (svg, height, padding, xScale) => {
+const addXAxisToBarChart = (svg, height, padding, xScale, categories) => {
   const xAxis = d3.axisBottom(xScale).ticks(3);
   svg.append("g")
     .attr("transform", "translate(55," + (height - padding) + ")")
@@ -77,3 +77,27 @@ const addGridlinesToBarChart = (svg, width, height) => {
 // https://bl.ocks.org/d3noob/c506ac45617cf9ed39337f99f8511218
 const makeXGridlines = x => d3.axisBottom(x).ticks(5)
 
+// https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
+function wrap(text, width) {
+  text.each(function () {
+    let text = d3.select(this),
+      words = text.text().split(/\s+/).reverse(),
+      word,
+      line = [],
+      lineNumber = 0,
+      lineHeight = 1.1, // ems
+      y = text.attr("y"),
+      dy = parseFloat(text.attr("dy")),
+      tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em")
+    while (word = words.pop()) {
+      line.push(word)
+      tspan.text(line.join(" "))
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop()
+        tspan.text(line.join(" "))
+        line = [word]
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
+      }
+    }
+  })
+}
