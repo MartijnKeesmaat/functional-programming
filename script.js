@@ -1,3 +1,5 @@
+import renderBarChart from 'renderBarChart.js'
+
 let categoryCounter = 0;
 const nCategories = 19;
 const categories = [];
@@ -86,7 +88,7 @@ const fetchMaterialPerCategoryEach = categoriesTermaster => {
 const handleFetchMaterialPerCategory = (data, category) => {
   categoryCounter++;
   categories.push(normalizeMaterialPerCategory(data, category));
-  if (categoryCounter >= nCategories) doSomething(categories);
+  if (categoryCounter >= nCategories) renderCharts(categories);
 };
 
 const normalizeMaterialPerCategory = (data, category) => {
@@ -107,80 +109,117 @@ const colors = {
   purple: "#6A2C70"
 };
 
-function doSomething(categories) {
-  const categoriesV1 = categories.slice(0, 5);
-  console.log(categoriesV1);
+function renderCharts(categories) {
+  const dataForFP = categories.slice(0, 5);
+  renderBarChart(dataForFP, 600, 300);
+  renderDonutChart(categories);
+}
 
-  const w = 600;
-  const h = 280;
-  const padding = 50;
 
-  const xScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(categoriesV1, d => d.value)])
-    .range([padding, w - padding]);
 
-  const svg = d3
-    .select("body")
-    .append("svg")
-    .attr("width", w)
-    .attr("height", h);
 
-  svg
-    .selectAll("rect")
-    .data(categoriesV1)
+
+function renderDonutChart(categories) {
+  const text = "";
+
+  const width = 234;
+  const height = 234;
+  const thickness = 35;
+
+  const radius = Math.min(width, height) / 2;
+  const colorArr = ['#B83B5E', '#995A3A', '#F08A5D', '#F9D769', '#6A2C70'];
+  const color = d3.scaleOrdinal(colorArr);
+
+  const svg = d3.select(".donut-chart")
+    .append('svg')
+    .attr('class', 'pie')
+    .attr('width', width)
+    .attr('height', height);
+
+  const g = svg.append('g')
+    .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+  const arc = d3.arc()
+    .innerRadius(radius - thickness)
+    .outerRadius(radius);
+
+  const pie = d3.pie()
+    .value(function (d) { return d.value; })
+    .sort(null);
+
+  const path = g.selectAll('path')
+    .data(pie(categories[0].materials))
     .enter()
-    .append("rect")
-    .attr("x", (d, i) => 100)
-    .attr("y", (d, i) => i * 50)
-    .attr("width", d => xScale(d.value) - 50)
-    .attr("height", 15)
-    .attr("class", "bar")
-    .attr("rx", 15 / 2) //height / 2
+    .append("g")
+    .on("mouseover", function (d) {
+      let g = d3.select(this)
+        .style("cursor", "pointer")
+        .style("fill", "black")
+        .append("g")
+        .attr("class", "text-group");
 
-  svg
-    .selectAll("text")
-    .data(categoriesV1)
-    .enter()
-    .append("text")
-    .text(d => d.name)
-    .attr("x", (d, i) => 0)
-    .attr("y", (d, i) => (i * 50) + 10)
-    .attr("class", "label")
-    .attr("dy", 0)//set the dy here
-    .attr("text-anchor", "end")
-    .attr("transform", "translate(90," + 0 + ")")
-    .call(wrap, 100);
+      g.append("text")
+        .attr("class", "name-text")
+        .text(`${d.data.name}`)
+        .attr('text-anchor', 'middle')
+        .attr('dy', '-1.2em');
 
-  const xAxis = d3.axisBottom(xScale).ticks(3);
-  svg.append("g")
-    .attr("transform", "translate(55," + (h - padding) + ")")
-    .attr("color", '#9AA1A9')
-    .call(xAxis)
-    .call(g => g.select(".domain").remove())
-
-  // https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
-  function wrap(text, width) {
-    text.each(function () {
-      var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
-        word,
-        line = [],
-        lineNumber = 0,
-        lineHeight = 1.1, // ems
-        y = text.attr("y"),
-        dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em")
-      while (word = words.pop()) {
-        line.push(word)
-        tspan.text(line.join(" "))
-        if (tspan.node().getComputedTextLength() > width) {
-          line.pop()
-          tspan.text(line.join(" "))
-          line = [word]
-          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
-        }
-      }
+      g.append("text")
+        .attr("class", "value-text")
+        .text(`${d.data.value}`)
+        .attr('text-anchor', 'middle')
+        .attr('dy', '.6em');
     })
-  }
+    .on("mouseout", function (d) {
+      d3.select(this)
+        .style("cursor", "none")
+        .style("fill", color(this._current))
+        .select(".text-group").remove();
+    })
+    .append('path')
+    .attr('d', arc)
+    .attr('fill', (d, i) => color(i))
+    .on("mouseover", function (d) {
+      d3.select(this)
+        .style("cursor", "pointer")
+        .style("fill", "black");
+    })
+    .on("mouseout", function (d) {
+      d3.select(this)
+        .style("cursor", "none")
+        .style("fill", color(this._current));
+    })
+    .each(function (d, i) { this._current = i; });
+
+
+  g.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dy', '.35em')
+    .text(text);
+}
+
+
+// https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
+function wrap(text, width) {
+  text.each(function () {
+    let text = d3.select(this),
+      words = text.text().split(/\s+/).reverse(),
+      word,
+      line = [],
+      lineNumber = 0,
+      lineHeight = 1.1, // ems
+      y = text.attr("y"),
+      dy = parseFloat(text.attr("dy")),
+      tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em")
+    while (word = words.pop()) {
+      line.push(word)
+      tspan.text(line.join(" "))
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop()
+        tspan.text(line.join(" "))
+        line = [word]
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", `${++lineNumber * lineHeight + dy}em`).text(word)
+      }
+    }
+  })
 }
