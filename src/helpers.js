@@ -5,6 +5,10 @@ export function truncator(str, words) {
     .join(" ");
 }
 
+export function capitalize(str) {
+  return str.slice(0, 1).toUpperCase() + str.substring(1)
+}
+
 // https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
 export function wrap(text, width) {
   text.each(function () {

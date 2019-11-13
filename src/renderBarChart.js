@@ -1,4 +1,4 @@
-import { wrap } from "./helpers";
+import { wrap, capitalize } from "./helpers";
 
 export default function renderBarChart(categories, width, height) {
   const padding = 50;
@@ -45,7 +45,7 @@ const addLabelsToBarChart = (svg, categories) => {
     .data(categories)
     .enter()
     .append("text")
-    .text(d => d.name)
+    .text(d => capitalize(d.name))
     .attr("x", (d, i) => 0)
     .attr("y", (d, i) => (i * 50) + 10)
     .attr("class", "label")

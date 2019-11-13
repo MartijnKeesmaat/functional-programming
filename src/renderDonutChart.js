@@ -1,4 +1,4 @@
-import { truncator, shadeColor } from './helpers';
+import { truncator, shadeColor, capitalize } from './helpers';
 
 export default function renderDonutChart(categories, size, thickness) {
 
@@ -8,7 +8,7 @@ export default function renderDonutChart(categories, size, thickness) {
   const colorPalette = addColorPalette();
 
   // Create donut
-  const svg = addGlobalSvg(width, height)
+  const svg = addGlobalSvg(width + 180, height)
   const arc = addArc(thickness, radius);
   const g = rotateArc(svg, width, height);
   const pie = addPieRadius();
@@ -19,14 +19,7 @@ export default function renderDonutChart(categories, size, thickness) {
   resetDonutText(path, categories);
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
-  addDefaultText(categories);
-
-  // d3
-  //   .selectAll('text')
-  //   .data(categories[1].materials)
-  //   .enter()
-  //   .text(d => d)
-
+  addDefaultText(categories, width, height);
 
   const legend = d3
     .select('.pie')
@@ -38,9 +31,9 @@ export default function renderDonutChart(categories, size, thickness) {
     .data(categories[1].materials)
     .enter()
     .append("text")
-    .text(d => d.name)
-    .attr("x", (d, i) => 50)
-    .attr("y", (d, i) => 50 * i)
+    .text(d => capitalize(d.name))
+    .attr("x", (d, i) => 0)
+    .attr("y", (d, i) => 120 + (50 * (i / 1.7)))
     .attr("class", "legend-label")
 }
 
@@ -56,7 +49,7 @@ const addGlobalSvg = (width, height) => {
     .append('svg')
     .attr('class', 'pie')
     .attr('width', width)
-    .attr('height', height);
+    .attr('height', height)
 }
 
 const addArc = (thickness, radius) => {
@@ -67,7 +60,7 @@ const addArc = (thickness, radius) => {
 
 const rotateArc = (svg, width, height) => {
   return svg.append('g')
-    .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+    .attr('transform', 'translate(' + ((width / 2) + 180) + ',' + (height / 2) + ')');
 }
 
 const addPieRadius = () => {
@@ -84,7 +77,7 @@ const createArcPaths = (g, pie, categories) => {
     .append("g")
 }
 
-function addDefaultText(categories) {
+function addDefaultText(categories, width, height) {
   const defaultText = d3
     .select('.pie')
     .append("g")
@@ -94,15 +87,15 @@ function addDefaultText(categories) {
     .attr("class", "donut-title")
     .text(truncator(categories[1].name, 1))
     .attr('text-anchor', 'middle')
-    .attr('dy', '50%')
-    .attr('dx', '50%')
+    .attr('dx', width / 2 + 180)
+    .attr('dy', height / 2)
 
   defaultText.append("text")
     .attr("class", "donut-sub-title")
     .text('Categorie')
     .attr('text-anchor', 'middle')
-    .attr('dy', '60%')
-    .attr('dx', '50%')
+    .attr('dx', width / 2 + 180)
+    .attr('dy', height / 2 + 20)
 }
 
 // INTERACTIONS

@@ -124,11 +124,16 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.truncator = truncator;
+exports.capitalize = capitalize;
 exports.wrap = wrap;
 exports.shadeColor = shadeColor;
 
 function truncator(str, words) {
   return str.split(/[, ]/).splice(0, words).join(" ");
+}
+
+function capitalize(str) {
+  return str.slice(0, 1).toUpperCase() + str.substring(1);
 } // https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
 
 
@@ -217,7 +222,7 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories) {
 
 var addLabelsToBarChart = function addLabelsToBarChart(svg, categories) {
   svg.selectAll("text").data(categories).enter().append("text").text(function (d) {
-    return d.name;
+    return (0, _helpers.capitalize)(d.name);
   }).attr("x", function (d, i) {
     return 0;
   }).attr("y", function (d, i) {
@@ -259,7 +264,7 @@ function renderDonutChart(categories, size, thickness) {
   var radius = Math.min(width, height) / 2;
   var colorPalette = addColorPalette(); // Create donut
 
-  var svg = addGlobalSvg(width, height);
+  var svg = addGlobalSvg(width + 180, height);
   var arc = addArc(thickness, radius);
   var g = rotateArc(svg, width, height);
   var pie = addPieRadius();
@@ -269,19 +274,14 @@ function renderDonutChart(categories, size, thickness) {
   resetDonutText(path, categories);
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
-  addDefaultText(categories); // d3
-  //   .selectAll('text')
-  //   .data(categories[1].materials)
-  //   .enter()
-  //   .text(d => d)
-
+  addDefaultText(categories, width, height);
   var legend = d3.select('.pie').append("g").attr('class', 'legend');
   legend.selectAll("text").data(categories[1].materials).enter().append("text").text(function (d) {
-    return d.name;
+    return (0, _helpers.capitalize)(d.name);
   }).attr("x", function (d, i) {
-    return 50;
+    return 0;
   }).attr("y", function (d, i) {
-    return 50 * i;
+    return 120 + 50 * (i / 1.7);
   }).attr("class", "legend-label");
 } // CREATE DONUT
 
@@ -300,7 +300,7 @@ var addArc = function addArc(thickness, radius) {
 };
 
 var rotateArc = function rotateArc(svg, width, height) {
-  return svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+  return svg.append('g').attr('transform', 'translate(' + (width / 2 + 180) + ',' + height / 2 + ')');
 };
 
 var addPieRadius = function addPieRadius() {
@@ -314,10 +314,10 @@ var createArcPaths = function createArcPaths(g, pie, categories) {
   return g.selectAll('path').data(pie(categories[1].materials)).enter().append("g");
 };
 
-function addDefaultText(categories) {
+function addDefaultText(categories, width, height) {
   var defaultText = d3.select('.pie').append("g").attr('class', 'default-text');
-  defaultText.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(categories[1].name, 1)).attr('text-anchor', 'middle').attr('dy', '50%').attr('dx', '50%');
-  defaultText.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dy', '60%').attr('dx', '50%');
+  defaultText.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(categories[1].name, 1)).attr('text-anchor', 'middle').attr('dx', width / 2 + 180).attr('dy', height / 2);
+  defaultText.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dx', width / 2 + 180).attr('dy', height / 2 + 20);
 } // INTERACTIONS
 
 
@@ -419,7 +419,7 @@ var normalizeMaterialPerCategory = function normalizeMaterialPerCategory(data, c
 function renderCharts(categories) {
   var dataForFP = categories.slice(0, 5);
   (0, _renderBarChart.default)(dataForFP, 600, 300);
-  (0, _renderDonutChart.default)(categories, 260, 35);
+  (0, _renderDonutChart.default)(categories, 240, 35, 200);
 }
 },{"./renderBarChart.js":"renderBarChart.js","./renderDonutChart.js":"renderDonutChart.js"}],"../../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -449,7 +449,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63745" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64020" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
