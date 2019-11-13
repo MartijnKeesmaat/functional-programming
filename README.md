@@ -9,11 +9,26 @@ For this project I created a dashboard which first shows the main categories of 
 ![Webp net-gifmaker (8)](https://user-images.githubusercontent.com/8048514/68758929-05cfc500-060f-11ea-8d78-dddc0e457a2a.gif)
 
 ## Demo
-See the the live demo [https://sharp-wozniak-7f007b.netlify.com/]
-
-## Demo displayed
+See the the live demo [https://sharp-wozniak-7f007b.netlify.com/](here)
 
 ## Install
+First install dependencies:
+
+```sh
+npm install
+```
+
+To create a production build:
+
+```sh
+npm run build-prod
+```
+
+To create a development build:
+
+```sh
+npm run build-dev
+```
 
 ## Wiki
 The [wiki](https://github.com/MartijnKeesmaat/functional-programming/wiki) documents the progress of this project. It goes over the process through the stages of the concept, technical research, visual design and prototype.
