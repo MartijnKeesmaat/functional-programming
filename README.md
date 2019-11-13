@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a77e8421-230a-49f8-96b9-327ef67bbe1a/deploy-status)](https://app.netlify.com/sites/boring-liskov-c16543/deploys)
+
 # 📈 NVWM Dashboard
 
 > The NVWM Dashboard is a project created for the [functional programming](https://github.com/cmda-tt/course-19-20/tree/master/functional-programming) of the [Amsterdam University of Applied Sciences](https://www.hva.nl/)
