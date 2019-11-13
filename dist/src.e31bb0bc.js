@@ -269,7 +269,20 @@ function renderDonutChart(categories, size, thickness) {
   resetDonutText(path, categories);
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
-  addDefaultText(categories);
+  addDefaultText(categories); // d3
+  //   .selectAll('text')
+  //   .data(categories[1].materials)
+  //   .enter()
+  //   .text(d => d)
+
+  var legend = d3.select('.pie').append("g").attr('class', 'legend');
+  legend.selectAll("text").data(categories[1].materials).enter().append("text").text(function (d) {
+    return d.name;
+  }).attr("x", function (d, i) {
+    return 50;
+  }).attr("y", function (d, i) {
+    return 50 * i;
+  }).attr("class", "legend-label");
 } // CREATE DONUT
 
 
@@ -310,7 +323,7 @@ function addDefaultText(categories) {
 
 var showCategoryText = function showCategoryText(el) {
   el.on("mouseover", function (d) {
-    d3.select('.donut-title').text(d.data.name);
+    d3.select('.donut-title').text((0, _helpers.truncator)(d.data.name, 1));
     d3.select('.donut-sub-title').text(d.data.value);
   });
 };

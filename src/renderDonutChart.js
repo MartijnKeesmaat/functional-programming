@@ -19,8 +19,29 @@ export default function renderDonutChart(categories, size, thickness) {
   resetDonutText(path, categories);
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
-
   addDefaultText(categories);
+
+  // d3
+  //   .selectAll('text')
+  //   .data(categories[1].materials)
+  //   .enter()
+  //   .text(d => d)
+
+
+  const legend = d3
+    .select('.pie')
+    .append("g")
+    .attr('class', 'legend');
+
+  legend
+    .selectAll("text")
+    .data(categories[1].materials)
+    .enter()
+    .append("text")
+    .text(d => d.name)
+    .attr("x", (d, i) => 50)
+    .attr("y", (d, i) => 50 * i)
+    .attr("class", "legend-label")
 }
 
 
@@ -63,7 +84,6 @@ const createArcPaths = (g, pie, categories) => {
     .append("g")
 }
 
-
 function addDefaultText(categories) {
   const defaultText = d3
     .select('.pie')
@@ -88,7 +108,7 @@ function addDefaultText(categories) {
 // INTERACTIONS
 const showCategoryText = el => {
   el.on("mouseover", function (d) {
-    d3.select('.donut-title').text(d.data.name);
+    d3.select('.donut-title').text(truncator(d.data.name, 1));
     d3.select('.donut-sub-title').text(d.data.value);
   })
 }
