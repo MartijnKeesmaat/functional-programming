@@ -1,6 +1,3 @@
-/* grey: "#EDF0F4",
-purple: "#6A2C70" */
-
 body {
   display: flex;
   align-items: center;
@@ -19,13 +16,8 @@ body {
   fill: #edf0f4;
 }
 
-svg rect:first-child {
+.bar-chart .bar:first-of-type {
   fill: #6A2C70;
-}
-
-.bar-chart {
-  /* margin-top: 100px;
-  margin-left: 100px; */
 }
 
 .donut-chart {
@@ -42,17 +34,13 @@ svg rect:first-child {
   fill: #505D6F;
 }
 
-svg {
-  margin-top: 20px;
-}
-
 .label:first-letter {
   text-transform: uppercase;
 }
 
 .grid line {
   stroke: lightgrey;
-  stroke-opacity: 0.7;
+  stroke-opacity: 0.4;
   shape-rendering: crispEdges;
 }
 
@@ -72,7 +60,37 @@ p {
   font-size: 16px;
 }
 
+.bar-chart svg {
+  margin-top: 20px;
+}
+
 .bar-chart p, .bar-chart h1 {
   margin-left: 100px;
 }
 
+.donut-title {
+  text-transform: capitalize;
+
+  font-size: 18px;
+  font-weight: bold;
+
+  fill: #505D6F;
+}
+
+.donut-chart .donut-sub-title {
+  font-size: 14px;
+
+  fill: #9AA1A9;
+}
+
+.legend-label {
+  font-size: 12px;
+
+  fill: #505D6F;
+}
+
+.x-axis line {
+  stroke: #E9EBF1;
+}
+
+/*# sourceMappingURL=/style.251b6741.css.map */
