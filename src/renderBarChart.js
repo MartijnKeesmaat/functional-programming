@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { wrap, capitalize } from "./helpers";
 
 export default function renderBarChart(categories, width, height) {

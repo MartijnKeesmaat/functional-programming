@@ -6,7 +6,6 @@ const nCategories = 19;
 const categories = [];
 
 const queryMainCategories = `
-  #+ summary: Get titles meestvoorkomende catogrieen
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
   PREFIX dc: <http://purl.org/dc/elements/1.1/>
   PREFIX dct: <http://purl.org/dc/terms/>
@@ -14,15 +13,16 @@ const queryMainCategories = `
   PREFIX edm: <http://www.europeana.eu/schemas/edm/>
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   # tel aantallen per materiaal
-  SELECT ?categoryLabel ?category (COUNT(?allChos) AS ?objCount) WHERE {
-    ?cho edm:isRelatedTo <https://hdl.handle.net/20.500.11840/termmaster2802> .
-    <https://hdl.handle.net/20.500.11840/termmaster2802> skos:narrower ?category .
-    ?category skos:prefLabel ?categoryLabel .
-    ?category skos:narrower* ?allChos .
+  SELECT ?categoryLabel ?category (COUNT(?cho) AS ?objCount) WHERE {
+  <https://hdl.handle.net/20.500.11840/termmaster2802> skos:narrower ?category .
+  ?category skos:prefLabel ?categoryLabel .
+  ?category skos:narrower* ?subcategory .
+  ?cho edm:isRelatedTo ?subcategory .
+  ?cho dct:medium ?place .
   }
-    
   GROUP BY ?categoryLabel ?category
   ORDER BY DESC(?objCount)
+
 `;
 
 const fetchDataFromQuery = (querySrc, query, outsideScope, responseFn) => {

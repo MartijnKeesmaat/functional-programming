@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import { truncator, shadeColor, capitalize } from './helpers';
 
 export default function renderDonutChart(categories, size, thickness) {
