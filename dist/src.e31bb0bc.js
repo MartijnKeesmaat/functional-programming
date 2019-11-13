@@ -264,7 +264,7 @@ function renderDonutChart(categories, size, thickness) {
   var radius = Math.min(width, height) / 2;
   var colorPalette = addColorPalette(); // Create donut
 
-  var svg = addGlobalSvg(width + 180, height);
+  var svg = addGlobalSvg(width + 180, height + 30);
   var arc = addArc(thickness, radius);
   var g = rotateArc(svg, width, height);
   var pie = addPieRadius();
@@ -279,10 +279,17 @@ function renderDonutChart(categories, size, thickness) {
   legend.selectAll("text").data(categories[1].materials).enter().append("text").text(function (d) {
     return (0, _helpers.capitalize)(d.name);
   }).attr("x", function (d, i) {
-    return 0;
+    return 14;
   }).attr("y", function (d, i) {
-    return 120 + 50 * (i / 1.7);
+    return 140 + 50 * (i / 1.7);
   }).attr("class", "legend-label");
+  legend.selectAll("circle").data(categories[1].materials).enter().append("circle").attr("r", 4).attr("cx", function (d, i) {
+    return 4;
+  }).attr("cy", function (d, i) {
+    return 140 + 50 * (i / 1.7) - 4;
+  }).attr("class", "legend-color").attr('fill', function (d, i) {
+    return colorPalette(i);
+  });
 } // CREATE DONUT
 
 

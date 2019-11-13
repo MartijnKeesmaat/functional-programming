@@ -8,7 +8,7 @@ export default function renderDonutChart(categories, size, thickness) {
   const colorPalette = addColorPalette();
 
   // Create donut
-  const svg = addGlobalSvg(width + 180, height)
+  const svg = addGlobalSvg(width + 180, height + 30)
   const arc = addArc(thickness, radius);
   const g = rotateArc(svg, width, height);
   const pie = addPieRadius();
@@ -32,9 +32,20 @@ export default function renderDonutChart(categories, size, thickness) {
     .enter()
     .append("text")
     .text(d => capitalize(d.name))
-    .attr("x", (d, i) => 0)
-    .attr("y", (d, i) => 120 + (50 * (i / 1.7)))
+    .attr("x", (d, i) => 14)
+    .attr("y", (d, i) => 140 + (50 * (i / 1.7)))
     .attr("class", "legend-label")
+
+  legend
+    .selectAll("circle")
+    .data(categories[1].materials)
+    .enter()
+    .append("circle")
+    .attr("r", 4)
+    .attr("cx", (d, i) => 4)
+    .attr("cy", (d, i) => 140 + (50 * (i / 1.7)) - 4)
+    .attr("class", "legend-color")
+    .attr('fill', (d, i) => colorPalette(i))
 }
 
 
@@ -60,7 +71,7 @@ const addArc = (thickness, radius) => {
 
 const rotateArc = (svg, width, height) => {
   return svg.append('g')
-    .attr('transform', 'translate(' + ((width / 2) + 180) + ',' + (height / 2) + ')');
+    .attr('transform', 'translate(' + ((width / 2) + 180) + ',' + ((height / 2)) + ')');
 }
 
 const addPieRadius = () => {
