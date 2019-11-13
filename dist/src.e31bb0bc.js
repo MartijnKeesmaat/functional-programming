@@ -218,32 +218,61 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = renderDonutChart;
 
+var addGlobalSvg = function addGlobalSvg(width, height) {
+  return d3.select(".donut-chart").append('svg').attr('class', 'pie').attr('width', width).attr('height', height);
+};
+
+var addArc = function addArc(thickness, radius) {
+  return d3.arc().innerRadius(radius - thickness).outerRadius(radius);
+};
+
+var addColorPalette = function addColorPalette() {
+  var colorArr = ['#B83B5E', '#995A3A', '#F08A5D', '#F9D769', '#6A2C70'];
+  return d3.scaleOrdinal(colorArr);
+};
+
+var addPieRadius = function addPieRadius() {
+  // transform the value of each group to a radius that will be displayed on the chart.
+  return d3.pie().value(function (d) {
+    return d.value;
+  }).sort(null);
+};
+
+var showDonutText = function showDonutText(el) {
+  el.on("mouseover", function (d) {
+    var g = d3.select(this).style("cursor", "pointer").style("fill", "black").append("g").attr("class", "text-group");
+    g.append("text").attr("class", "name-text").text("".concat(d.data.name)).attr('text-anchor', 'middle').attr('dy', '-1.2em');
+    g.append("text").attr("class", "value-text").text("".concat(d.data.value)).attr('text-anchor', 'middle').attr('dy', '.6em');
+  });
+};
+
+var hideDonutText = function hideDonutText(el, colorPalette) {
+  el.on("mouseout", function (d) {
+    d3.select(this).style("cursor", "none").style("fill", colorPalette(this._current)).select(".text-group").remove();
+  });
+};
+
 function renderDonutChart(categories) {
   var text = "";
   var width = 234;
   var height = 234;
   var thickness = 35;
   var radius = Math.min(width, height) / 2;
-  var colorArr = ['#B83B5E', '#995A3A', '#F08A5D', '#F9D769', '#6A2C70'];
-  var color = d3.scaleOrdinal(colorArr);
-  var svg = d3.select(".donut-chart").append('svg').attr('class', 'pie').attr('width', width).attr('height', height);
+  var colorPalette = addColorPalette();
+  var svg = addGlobalSvg(width, height);
+  var arc = addArc(thickness, radius); // Why?
+
   var g = svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-  var arc = d3.arc().innerRadius(radius - thickness).outerRadius(radius);
-  var pie = d3.pie().value(function (d) {
-    return d.value;
-  }).sort(null);
-  var path = g.selectAll('path').data(pie(categories[0].materials)).enter().append("g").on("mouseover", function (d) {
-    var g = d3.select(this).style("cursor", "pointer").style("fill", "black").append("g").attr("class", "text-group");
-    g.append("text").attr("class", "name-text").text("".concat(d.data.name)).attr('text-anchor', 'middle').attr('dy', '-1.2em');
-    g.append("text").attr("class", "value-text").text("".concat(d.data.value)).attr('text-anchor', 'middle').attr('dy', '.6em');
-  }).on("mouseout", function (d) {
-    d3.select(this).style("cursor", "none").style("fill", color(this._current)).select(".text-group").remove();
-  }).append('path').attr('d', arc).attr('fill', function (d, i) {
-    return color(i);
+  var pie = addPieRadius();
+  var path = g.selectAll('path').data(pie(categories[0].materials)).enter().append("g");
+  showDonutText(path);
+  hideDonutText(path, colorPalette);
+  path.append('path').attr('d', arc).attr('fill', function (d, i) {
+    return colorPalette(i);
   }).on("mouseover", function (d) {
     d3.select(this).style("cursor", "pointer").style("fill", "black");
   }).on("mouseout", function (d) {
-    d3.select(this).style("cursor", "none").style("fill", color(this._current));
+    d3.select(this).style("cursor", "none").style("fill", colorPalette(this._current));
   }).each(function (d, i) {
     this._current = i;
   });
@@ -352,7 +381,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54248" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63511" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
