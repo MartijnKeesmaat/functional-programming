@@ -53,3 +53,4 @@ Since the data that is being retrieved doesn't need much cleaning, I decided to 
 - [Brushable bar chart](http://bl.ocks.org/nbremer/4c015860931fb6a13afc7bac51f40b43)
 - [Color palette inspiration](https://colorhunt.co/palette/361)
 - [FreeCodeCamp, data visualization](https://www.freecodecamp.org/learn/data-visualization)
+- [Donut chart in D3v4](https://codepen.io/zakariachowdhury/pen/EZeGJy)
