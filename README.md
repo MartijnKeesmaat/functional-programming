@@ -9,8 +9,8 @@ In functional programming (fp) you learn how to create visualisations from exter
 For this project I created a dashboard which first shows the main categories of the [NMVW organisation](https://collectie.wereldculturen.nl/#/query/a399dc40-72c2-48e0-9675-654ffc84570f) and second the materials of their respective category. The categories are displayed in a bar chart. This chart shows the 5 first 5 categories. If the user scrolls he/she can view all categories. The user will be greeted with the materials of a category when clicked on a bar in the bar chart.
 
 ## Demo
-![Webp net-gifmaker (8)](https://user-images.githubusercontent.com/8048514/68758929-05cfc500-060f-11ea-8d78-dddc0e457a2a.gif)
 See the the live demo [here](https://functional-progammer.netlify.com/)
+![Webp net-gifmaker (8)](https://user-images.githubusercontent.com/8048514/68758929-05cfc500-060f-11ea-8d78-dddc0e457a2a.gif)
 
 ## Install
 First install dependencies:
