@@ -211,7 +211,7 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories) {
     return i * 50;
   }).attr("width", function (d) {
     return xScale(d.value) - 50;
-  }).attr("height", 15).attr("class", "bar"); // .attr("rx", 15 / 2) //height / 2
+  }).attr("height", 15).attr("class", "bar").attr("rx", 15 / 2); //height / 2
 };
 
 var addLabelsToBarChart = function addLabelsToBarChart(svg, categories) {
