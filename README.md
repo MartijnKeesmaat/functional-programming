@@ -11,7 +11,7 @@ For this project I created a dashboard which first shows the main categories of 
 ![Webp net-gifmaker (8)](https://user-images.githubusercontent.com/8048514/68758929-05cfc500-060f-11ea-8d78-dddc0e457a2a.gif)
 
 ## Demo
-See the the live demo [here](https://sharp-wozniak-7f007b.netlify.com/)
+See the the live demo [here](https://functional-progammer.netlify.com/)
 
 ## Install
 First install dependencies:
