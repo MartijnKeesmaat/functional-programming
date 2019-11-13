@@ -113,7 +113,7 @@ const colors = {
 function renderCharts(categories) {
   const dataForFP = categories.slice(0, 5);
   renderBarChart(dataForFP, 600, 300);
-  renderDonutChart(categories);
+  renderDonutChart(categories, 234, 234, 35);
 }
 
 

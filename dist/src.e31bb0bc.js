@@ -218,6 +218,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = renderDonutChart;
 
+function renderDonutChart(categories, width, height, thickness) {
+  // Setup
+  var radius = Math.min(width, height) / 2;
+  var colorPalette = addColorPalette(); // Create donut
+
+  var svg = addGlobalSvg(width, height);
+  var arc = addArc(thickness, radius);
+  var g = rotateArc(svg, width, height);
+  var pie = addPieRadius();
+  var path = createArcPaths(g, pie, categories); // Interactions
+
+  showDonutText(path);
+  hideDonutText(path, colorPalette);
+  path = addFillToDonut(path, arc, colorPalette);
+  addArcHover(path, colorPalette);
+  addDefaultText(g, 'ab');
+}
+
 var addGlobalSvg = function addGlobalSvg(width, height) {
   return d3.select(".donut-chart").append('svg').attr('class', 'pie').attr('width', width).attr('height', height);
 };
@@ -258,22 +276,7 @@ var addFillToDonut = function addFillToDonut(path, arc, colorPalette) {
   });
 };
 
-function renderDonutChart(categories) {
-  var text = "";
-  var width = 234;
-  var height = 234;
-  var thickness = 35;
-  var radius = Math.min(width, height) / 2;
-  var colorPalette = addColorPalette();
-  var svg = addGlobalSvg(width, height);
-  var arc = addArc(thickness, radius); // Why?
-
-  var g = svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-  var pie = addPieRadius();
-  var path = g.selectAll('path').data(pie(categories[0].materials)).enter().append("g");
-  showDonutText(path);
-  hideDonutText(path, colorPalette);
-  path = addFillToDonut(path, arc, colorPalette);
+var addArcHover = function addArcHover(path, colorPalette) {
   path.on("mouseover", function (d) {
     d3.select(this).style("cursor", "pointer").style("fill", "black");
   });
@@ -282,8 +285,19 @@ function renderDonutChart(categories) {
   }).each(function (d, i) {
     this._current = i;
   });
+};
+
+var createArcPaths = function createArcPaths(g, pie, categories) {
+  return g.selectAll('path').data(pie(categories[0].materials)).enter().append("g");
+};
+
+var rotateArc = function rotateArc(svg, width, height) {
+  return svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+};
+
+var addDefaultText = function addDefaultText(g, text) {
   g.append('text').attr('text-anchor', 'middle').attr('dy', '.35em').text(text);
-}
+};
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -357,7 +371,7 @@ var colors = {
 function renderCharts(categories) {
   var dataForFP = categories.slice(0, 5);
   (0, _renderBarChart.default)(dataForFP, 600, 300);
-  (0, _renderDonutChart.default)(categories);
+  (0, _renderDonutChart.default)(categories, 234, 234, 35);
 }
 },{"./renderBarChart.js":"renderBarChart.js","./renderDonutChart.js":"renderDonutChart.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];

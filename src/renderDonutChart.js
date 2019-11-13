@@ -1,3 +1,24 @@
+export default function renderDonutChart(categories, width, height, thickness) {
+  // Setup
+  const radius = Math.min(width, height) / 2;
+  const colorPalette = addColorPalette();
+
+  // Create donut
+  const svg = addGlobalSvg(width, height)
+  const arc = addArc(thickness, radius);
+  const g = rotateArc(svg, width, height);
+  const pie = addPieRadius();
+  let path = createArcPaths(g, pie, categories);
+
+  // Interactions
+  showDonutText(path);
+  hideDonutText(path, colorPalette);
+  path = addFillToDonut(path, arc, colorPalette);
+  addArcHover(path, colorPalette);
+
+  addDefaultText(g, 'ab');
+}
+
 const addGlobalSvg = (width, height) => {
   return d3.select(".donut-chart")
     .append('svg')
@@ -61,35 +82,7 @@ const addFillToDonut = (path, arc, colorPalette) => {
     .attr('fill', (d, i) => colorPalette(i))
 }
 
-export default function renderDonutChart(categories) {
-  const text = "";
-
-  const width = 234;
-  const height = 234;
-
-  const thickness = 35;
-  const radius = Math.min(width, height) / 2;
-  const colorPalette = addColorPalette();
-
-  const svg = addGlobalSvg(width, height)
-  const arc = addArc(thickness, radius);
-
-  // Why?
-  const g = svg.append('g')
-    .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
-
-  const pie = addPieRadius();
-
-  let path = g.selectAll('path')
-    .data(pie(categories[0].materials))
-    .enter()
-    .append("g")
-
-  showDonutText(path);
-  hideDonutText(path, colorPalette);
-
-  path = addFillToDonut(path, arc, colorPalette);
-
+const addArcHover = (path, colorPalette) => {
   path
     .on("mouseover", function (d) {
       d3.select(this)
@@ -104,12 +97,27 @@ export default function renderDonutChart(categories) {
         .style("fill", colorPalette(this._current));
     })
     .each(function (d, i) { this._current = i; });
+}
 
+const createArcPaths = (g, pie, categories) => {
+  return g.selectAll('path')
+    .data(pie(categories[0].materials))
+    .enter()
+    .append("g")
+}
 
+const rotateArc = (svg, width, height) => {
+  return svg.append('g')
+    .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+}
+
+const addDefaultText = (g, text) => {
   g.append('text')
     .attr('text-anchor', 'middle')
     .attr('dy', '.35em')
     .text(text);
 }
+
+
 
 
