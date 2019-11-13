@@ -42,8 +42,6 @@ Data being used in the app regards the main categories and their respective most
 ### Data cleaning
 Since the data that is being retrieved doesn't need much cleaning, I decided to clean the survey data from another project. This is explained on the [data cleaning](https://github.com/MartijnKeesmaat/functional-programming/wiki/Data-cleaning-exercise) page.
 
-## Tech stack
-
 ## Acknowledgments
 - [The NMVW org.](https://collectie.wereldculturen.nl/), for hosting us and prodiving the data
 - [D3 dashboard](http://bl.ocks.org/NPashaP/96447623ef4d342ee09b)
