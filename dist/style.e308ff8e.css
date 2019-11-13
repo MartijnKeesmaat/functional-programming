@@ -76,6 +76,19 @@ p {
   margin-left: 100px;
 }
 
+.donut-title {
+  text-transform: capitalize;
 
+  font-size: 18px;
+  font-weight: bold;
+
+  fill: #505D6F;
+}
+
+.donut-sub-title {
+  font-size: 14px;
+
+  fill: #9AA1A9;
+}
 
 /*# sourceMappingURL=/style.e308ff8e.css.map */

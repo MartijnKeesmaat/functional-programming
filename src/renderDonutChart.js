@@ -1,5 +1,6 @@
-export default function renderDonutChart(categories, width, height, thickness) {
+export default function renderDonutChart(categories, size, thickness) {
   // Setup
+  const width = size, height = size;
   const radius = Math.min(width, height) / 2;
   const colorPalette = addColorPalette();
 
@@ -16,7 +17,7 @@ export default function renderDonutChart(categories, width, height, thickness) {
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
 
-  addDefaultText(g, 'ab');
+  // addDefaultText(g, 'ab');
 }
 
 const addGlobalSvg = (width, height) => {
@@ -49,21 +50,20 @@ const showDonutText = el => {
   el.on("mouseover", function (d) {
     let g = d3.select(this)
       .style("cursor", "pointer")
-      .style("fill", "black")
       .append("g")
       .attr("class", "text-group");
 
     g.append("text")
-      .attr("class", "name-text")
-      .text(`${d.data.name}`)
+      .attr("class", "donut-title")
+      .text(truncator(d.data.name, 1))
       .attr('text-anchor', 'middle')
-      .attr('dy', '-1.2em');
+      .attr('dy', '-0.2em');
 
     g.append("text")
-      .attr("class", "value-text")
-      .text(`${d.data.value}`)
+      .attr("class", "donut-sub-title")
+      .text(d.data.value)
       .attr('text-anchor', 'middle')
-      .attr('dy', '.6em');
+      .attr('dy', '1.5em');
   })
 }
 
@@ -71,7 +71,6 @@ const hideDonutText = (el, colorPalette) => {
   el.on("mouseout", function (d) {
     d3.select(this)
       .style("cursor", "none")
-      .style("fill", colorPalette(this._current))
       .select(".text-group").remove();
   })
 }
@@ -115,9 +114,14 @@ const addDefaultText = (g, text) => {
   g.append('text')
     .attr('text-anchor', 'middle')
     .attr('dy', '.35em')
+    .attr('class', 'donut-title')
     .text(text);
 }
 
-
+const truncator = (str, words) =>
+  str
+    .split(" ")
+    .splice(0, words)
+    .join(" ");
 
 

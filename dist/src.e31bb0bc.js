@@ -218,8 +218,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = renderDonutChart;
 
-function renderDonutChart(categories, width, height, thickness) {
+function renderDonutChart(categories, size, thickness) {
   // Setup
+  var width = size,
+      height = size;
   var radius = Math.min(width, height) / 2;
   var colorPalette = addColorPalette(); // Create donut
 
@@ -232,8 +234,7 @@ function renderDonutChart(categories, width, height, thickness) {
   showDonutText(path);
   hideDonutText(path, colorPalette);
   path = addFillToDonut(path, arc, colorPalette);
-  addArcHover(path, colorPalette);
-  addDefaultText(g, 'ab');
+  addArcHover(path, colorPalette); // addDefaultText(g, 'ab');
 }
 
 var addGlobalSvg = function addGlobalSvg(width, height) {
@@ -258,15 +259,15 @@ var addPieRadius = function addPieRadius() {
 
 var showDonutText = function showDonutText(el) {
   el.on("mouseover", function (d) {
-    var g = d3.select(this).style("cursor", "pointer").style("fill", "black").append("g").attr("class", "text-group");
-    g.append("text").attr("class", "name-text").text("".concat(d.data.name)).attr('text-anchor', 'middle').attr('dy', '-1.2em');
-    g.append("text").attr("class", "value-text").text("".concat(d.data.value)).attr('text-anchor', 'middle').attr('dy', '.6em');
+    var g = d3.select(this).style("cursor", "pointer").append("g").attr("class", "text-group");
+    g.append("text").attr("class", "donut-title").text(truncator(d.data.name, 1)).attr('text-anchor', 'middle').attr('dy', '-0.2em');
+    g.append("text").attr("class", "donut-sub-title").text(d.data.value).attr('text-anchor', 'middle').attr('dy', '1.5em');
   });
 };
 
 var hideDonutText = function hideDonutText(el, colorPalette) {
   el.on("mouseout", function (d) {
-    d3.select(this).style("cursor", "none").style("fill", colorPalette(this._current)).select(".text-group").remove();
+    d3.select(this).style("cursor", "none").select(".text-group").remove();
   });
 };
 
@@ -296,7 +297,11 @@ var rotateArc = function rotateArc(svg, width, height) {
 };
 
 var addDefaultText = function addDefaultText(g, text) {
-  g.append('text').attr('text-anchor', 'middle').attr('dy', '.35em').text(text);
+  g.append('text').attr('text-anchor', 'middle').attr('dy', '.35em').attr('class', 'donut-title').text(text);
+};
+
+var truncator = function truncator(str, words) {
+  return str.split(" ").splice(0, words).join(" ");
 };
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
@@ -363,15 +368,10 @@ var normalizeMaterialPerCategory = function normalizeMaterialPerCategory(data, c
   };
 };
 
-var colors = {
-  grey: "#EDF0F4",
-  purple: "#6A2C70"
-};
-
 function renderCharts(categories) {
   var dataForFP = categories.slice(0, 5);
   (0, _renderBarChart.default)(dataForFP, 600, 300);
-  (0, _renderDonutChart.default)(categories, 234, 234, 35);
+  (0, _renderDonutChart.default)(categories, 260, 35);
 }
 },{"./renderBarChart.js":"renderBarChart.js","./renderDonutChart.js":"renderDonutChart.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];

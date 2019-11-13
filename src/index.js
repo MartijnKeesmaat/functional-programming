@@ -105,15 +105,10 @@ const normalizeMaterialPerCategory = (data, category) => {
   };
 };
 
-const colors = {
-  grey: "#EDF0F4",
-  purple: "#6A2C70"
-};
-
 function renderCharts(categories) {
   const dataForFP = categories.slice(0, 5);
   renderBarChart(dataForFP, 600, 300);
-  renderDonutChart(categories, 234, 234, 35);
+  renderDonutChart(categories, 260, 35);
 }
 
 
