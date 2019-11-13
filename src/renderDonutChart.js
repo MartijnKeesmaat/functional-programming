@@ -1,6 +1,7 @@
-import { truncator } from './helpers';
+import { truncator, shadeColor } from './helpers';
 
 export default function renderDonutChart(categories, size, thickness) {
+
   // Setup
   const width = size, height = size;
   const radius = Math.min(width, height) / 2;
@@ -14,12 +15,12 @@ export default function renderDonutChart(categories, size, thickness) {
   let path = createArcPaths(g, pie, categories);
 
   // Interactions
-  showDonutText(path);
-  hideDonutText(path, colorPalette);
+  showCategoryText(path);
+  resetDonutText(path, categories);
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
 
-  addDefaultText(g, categories);
+  addDefaultText(categories);
 }
 
 
@@ -57,60 +58,45 @@ const addPieRadius = () => {
 
 const createArcPaths = (g, pie, categories) => {
   return g.selectAll('path')
-    .data(pie(categories[0].materials))
+    .data(pie(categories[1].materials))
     .enter()
     .append("g")
 }
 
 
-// INTERACTIONS
-const addDefaultText = (g, categories) => {
-  // const defaultText = d3.select(this)
-  //   .style("cursor", "pointer")
-  //   .attr("class", "default-text");
+function addDefaultText(categories) {
+  const defaultText = d3
+    .select('.pie')
+    .append("g")
+    .attr('class', 'default-text');
 
-  const f = g.append("g")
-    .attr('class', 'default-text')
-
-  f.append("text")
+  defaultText.append("text")
     .attr("class", "donut-title")
-    .text(truncator(categories[0].name, 1))
+    .text(truncator(categories[1].name, 1))
     .attr('text-anchor', 'middle')
-    .attr('dy', '-0.2em')
+    .attr('dy', '50%')
+    .attr('dx', '50%')
 
-  f.append("text")
+  defaultText.append("text")
     .attr("class", "donut-sub-title")
     .text('Categorie')
     .attr('text-anchor', 'middle')
-    .attr('dy', '1.5em');
+    .attr('dy', '60%')
+    .attr('dx', '50%')
 }
 
-const showDonutText = el => {
+// INTERACTIONS
+const showCategoryText = el => {
   el.on("mouseover", function (d) {
-    let g = d3.select(this)
-      .style("cursor", "pointer")
-      .append("g")
-      .attr("class", "text-group");
-
-    g.append("text")
-      .attr("class", "donut-title")
-      .text(truncator(d.data.name, 1))
-      .attr('text-anchor', 'middle')
-      .attr('dy', '-0.2em');
-
-    g.append("text")
-      .attr("class", "donut-sub-title")
-      .text(d.data.value)
-      .attr('text-anchor', 'middle')
-      .attr('dy', '1.5em');
+    d3.select('.donut-title').text(d.data.name);
+    d3.select('.donut-sub-title').text(d.data.value);
   })
 }
 
-const hideDonutText = (el, colorPalette) => {
-  el.on("mouseout", function (d) {
-    d3.select(this)
-      .style("cursor", "none")
-      .select(".text-group").remove();
+const resetDonutText = (el, categories) => {
+  el.on("mouseout", function () {
+    d3.select('.donut-title').text(truncator(categories[1].name, 1));
+    d3.select('.donut-sub-title').text('Categorie');
   })
 }
 
@@ -125,7 +111,7 @@ const addArcHover = (path, colorPalette) => {
     .on("mouseover", function (d) {
       d3.select(this)
         .style("cursor", "pointer")
-        .style("fill", "black");
+        .style("fill", shadeColor(colorPalette(this._current), -20));
     })
 
   path
@@ -136,6 +122,3 @@ const addArcHover = (path, colorPalette) => {
     })
     .each(function (d, i) { this._current = i; });
 }
-
-
-// Helpers

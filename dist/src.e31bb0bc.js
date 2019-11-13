@@ -125,6 +125,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.truncator = truncator;
 exports.wrap = wrap;
+exports.shadeColor = shadeColor;
 
 function truncator(str, words) {
   return str.split(/[, ]/).splice(0, words).join(" ");
@@ -156,6 +157,23 @@ function wrap(text, width) {
       }
     }
   });
+} // https://stackoverflow.com/a/13532993
+
+
+function shadeColor(color, percent) {
+  var R = parseInt(color.substring(1, 3), 16);
+  var G = parseInt(color.substring(3, 5), 16);
+  var B = parseInt(color.substring(5, 7), 16);
+  R = parseInt(R * (100 + percent) / 100);
+  G = parseInt(G * (100 + percent) / 100);
+  B = parseInt(B * (100 + percent) / 100);
+  R = R < 255 ? R : 255;
+  G = G < 255 ? G : 255;
+  B = B < 255 ? B : 255;
+  var RR = R.toString(16).length == 1 ? "0" + R.toString(16) : R.toString(16);
+  var GG = G.toString(16).length == 1 ? "0" + G.toString(16) : G.toString(16);
+  var BB = B.toString(16).length == 1 ? "0" + B.toString(16) : B.toString(16);
+  return "#" + RR + GG + BB;
 }
 },{}],"renderBarChart.js":[function(require,module,exports) {
 "use strict";
@@ -247,11 +265,11 @@ function renderDonutChart(categories, size, thickness) {
   var pie = addPieRadius();
   var path = createArcPaths(g, pie, categories); // Interactions
 
-  showDonutText(path);
-  hideDonutText(path, colorPalette);
+  showCategoryText(path);
+  resetDonutText(path, categories);
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
-  addDefaultText(g, categories);
+  addDefaultText(categories);
 } // CREATE DONUT
 
 
@@ -280,30 +298,27 @@ var addPieRadius = function addPieRadius() {
 };
 
 var createArcPaths = function createArcPaths(g, pie, categories) {
-  return g.selectAll('path').data(pie(categories[0].materials)).enter().append("g");
-}; // INTERACTIONS
-
-
-var addDefaultText = function addDefaultText(g, categories) {
-  // const defaultText = d3.select(this)
-  //   .style("cursor", "pointer")
-  //   .attr("class", "default-text");
-  var f = g.append("g").attr('class', 'default-text');
-  f.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(categories[0].name, 1)).attr('text-anchor', 'middle').attr('dy', '-0.2em');
-  f.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dy', '1.5em');
+  return g.selectAll('path').data(pie(categories[1].materials)).enter().append("g");
 };
 
-var showDonutText = function showDonutText(el) {
+function addDefaultText(categories) {
+  var defaultText = d3.select('.pie').append("g").attr('class', 'default-text');
+  defaultText.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(categories[1].name, 1)).attr('text-anchor', 'middle').attr('dy', '50%').attr('dx', '50%');
+  defaultText.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dy', '60%').attr('dx', '50%');
+} // INTERACTIONS
+
+
+var showCategoryText = function showCategoryText(el) {
   el.on("mouseover", function (d) {
-    var g = d3.select(this).style("cursor", "pointer").append("g").attr("class", "text-group");
-    g.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(d.data.name, 1)).attr('text-anchor', 'middle').attr('dy', '-0.2em');
-    g.append("text").attr("class", "donut-sub-title").text(d.data.value).attr('text-anchor', 'middle').attr('dy', '1.5em');
+    d3.select('.donut-title').text(d.data.name);
+    d3.select('.donut-sub-title').text(d.data.value);
   });
 };
 
-var hideDonutText = function hideDonutText(el, colorPalette) {
-  el.on("mouseout", function (d) {
-    d3.select(this).style("cursor", "none").select(".text-group").remove();
+var resetDonutText = function resetDonutText(el, categories) {
+  el.on("mouseout", function () {
+    d3.select('.donut-title').text((0, _helpers.truncator)(categories[1].name, 1));
+    d3.select('.donut-sub-title').text('Categorie');
   });
 };
 
@@ -315,14 +330,14 @@ var addFillToDonut = function addFillToDonut(path, arc, colorPalette) {
 
 var addArcHover = function addArcHover(path, colorPalette) {
   path.on("mouseover", function (d) {
-    d3.select(this).style("cursor", "pointer").style("fill", "black");
+    d3.select(this).style("cursor", "pointer").style("fill", (0, _helpers.shadeColor)(colorPalette(this._current), -20));
   });
   path.on("mouseout", function (d) {
     d3.select(this).style("cursor", "none").style("fill", colorPalette(this._current));
   }).each(function (d, i) {
     this._current = i;
   });
-}; // Helpers
+};
 },{"./helpers":"helpers.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
