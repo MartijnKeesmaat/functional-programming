@@ -19,9 +19,10 @@ body {
   fill: #edf0f4;
 }
 
-svg rect:first-child {
+.bar-chart .bar:first-of-type {
   fill: #6A2C70;
 }
+
 
 .bar-chart {
   /* margin-top: 100px;
@@ -48,7 +49,7 @@ svg rect:first-child {
 
 .grid line {
   stroke: lightgrey;
-  stroke-opacity: 0.7;
+  stroke-opacity: 0.4;
   shape-rendering: crispEdges;
 }
 
@@ -95,4 +96,8 @@ p {
   font-size: 12px;
 
   fill: #505D6F;
+}
+
+.x-axis line {
+  stroke: #E9EBF1;
 }
