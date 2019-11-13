@@ -13,6 +13,7 @@ export default function renderDonutChart(categories, size, thickness) {
   const g = rotateArc(svg, width, height);
   const pie = addPieRadius();
   let path = createArcPaths(g, pie, categories);
+  addLegend(categories, colorPalette);
 
   // Interactions
   showCategoryText(path);
@@ -20,32 +21,6 @@ export default function renderDonutChart(categories, size, thickness) {
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
   addDefaultText(categories, width, height);
-
-  const legend = d3
-    .select('.pie')
-    .append("g")
-    .attr('class', 'legend');
-
-  legend
-    .selectAll("text")
-    .data(categories[1].materials)
-    .enter()
-    .append("text")
-    .text(d => capitalize(d.name))
-    .attr("x", (d, i) => 14)
-    .attr("y", (d, i) => 140 + (50 * (i / 1.7)))
-    .attr("class", "legend-label")
-
-  legend
-    .selectAll("circle")
-    .data(categories[1].materials)
-    .enter()
-    .append("circle")
-    .attr("r", 4)
-    .attr("cx", (d, i) => 4)
-    .attr("cy", (d, i) => 140 + (50 * (i / 1.7)) - 4)
-    .attr("class", "legend-color")
-    .attr('fill', (d, i) => colorPalette(i))
 }
 
 
@@ -107,6 +82,34 @@ function addDefaultText(categories, width, height) {
     .attr('text-anchor', 'middle')
     .attr('dx', width / 2 + 180)
     .attr('dy', height / 2 + 20)
+}
+
+const addLegend = (categories, colorPalette) => {
+  const legend = d3
+    .select('.pie')
+    .append("g")
+    .attr('class', 'legend');
+
+  legend
+    .selectAll("text")
+    .data(categories[1].materials)
+    .enter()
+    .append("text")
+    .text(d => capitalize(d.name))
+    .attr("x", (d, i) => 14)
+    .attr("y", (d, i) => 140 + (50 * (i / 1.7)))
+    .attr("class", "legend-label")
+
+  legend
+    .selectAll("circle")
+    .data(categories[1].materials)
+    .enter()
+    .append("circle")
+    .attr("r", 4)
+    .attr("cx", (d, i) => 4)
+    .attr("cy", (d, i) => 140 + (50 * (i / 1.7)) - 4)
+    .attr("class", "legend-color")
+    .attr('fill', (d, i) => colorPalette(i))
 }
 
 // INTERACTIONS

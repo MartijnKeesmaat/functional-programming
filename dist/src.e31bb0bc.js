@@ -268,28 +268,14 @@ function renderDonutChart(categories, size, thickness) {
   var arc = addArc(thickness, radius);
   var g = rotateArc(svg, width, height);
   var pie = addPieRadius();
-  var path = createArcPaths(g, pie, categories); // Interactions
+  var path = createArcPaths(g, pie, categories);
+  addLegend(categories, colorPalette); // Interactions
 
   showCategoryText(path);
   resetDonutText(path, categories);
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
   addDefaultText(categories, width, height);
-  var legend = d3.select('.pie').append("g").attr('class', 'legend');
-  legend.selectAll("text").data(categories[1].materials).enter().append("text").text(function (d) {
-    return (0, _helpers.capitalize)(d.name);
-  }).attr("x", function (d, i) {
-    return 14;
-  }).attr("y", function (d, i) {
-    return 140 + 50 * (i / 1.7);
-  }).attr("class", "legend-label");
-  legend.selectAll("circle").data(categories[1].materials).enter().append("circle").attr("r", 4).attr("cx", function (d, i) {
-    return 4;
-  }).attr("cy", function (d, i) {
-    return 140 + 50 * (i / 1.7) - 4;
-  }).attr("class", "legend-color").attr('fill', function (d, i) {
-    return colorPalette(i);
-  });
 } // CREATE DONUT
 
 
@@ -325,7 +311,25 @@ function addDefaultText(categories, width, height) {
   var defaultText = d3.select('.pie').append("g").attr('class', 'default-text');
   defaultText.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(categories[1].name, 1)).attr('text-anchor', 'middle').attr('dx', width / 2 + 180).attr('dy', height / 2);
   defaultText.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dx', width / 2 + 180).attr('dy', height / 2 + 20);
-} // INTERACTIONS
+}
+
+var addLegend = function addLegend(categories, colorPalette) {
+  var legend = d3.select('.pie').append("g").attr('class', 'legend');
+  legend.selectAll("text").data(categories[1].materials).enter().append("text").text(function (d) {
+    return (0, _helpers.capitalize)(d.name);
+  }).attr("x", function (d, i) {
+    return 14;
+  }).attr("y", function (d, i) {
+    return 140 + 50 * (i / 1.7);
+  }).attr("class", "legend-label");
+  legend.selectAll("circle").data(categories[1].materials).enter().append("circle").attr("r", 4).attr("cx", function (d, i) {
+    return 4;
+  }).attr("cy", function (d, i) {
+    return 140 + 50 * (i / 1.7) - 4;
+  }).attr("class", "legend-color").attr('fill', function (d, i) {
+    return colorPalette(i);
+  });
+}; // INTERACTIONS
 
 
 var showCategoryText = function showCategoryText(el) {

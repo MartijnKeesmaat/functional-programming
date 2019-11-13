@@ -42,10 +42,6 @@ svg rect:first-child {
   fill: #505D6F;
 }
 
-svg {
-  margin-top: 20px;
-}
-
 .label:first-letter {
   text-transform: uppercase;
 }
@@ -70,6 +66,10 @@ p {
   color: #9AA1A9;
 
   font-size: 16px;
+}
+
+.bar-chart svg {
+  margin-top: 20px;
 }
 
 .bar-chart p, .bar-chart h1 {
