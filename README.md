@@ -38,12 +38,10 @@ The [wiki](https://github.com/MartijnKeesmaat/functional-programming/wiki) docum
 ## Data
 The data that is used comes from the database of the [NMVW collection](https://collectie.wereldculturen.nl/). For the assignment we are asked to use [SPARQL](https://www.w3.org/TR/rdf-sparql-query/) to retrieve the data. 
 
-ADD which data is used
+Data being used in the app regards the main categories and their respective most-used materials. The process of gaining this data is explained on the [quest for the query](https://github.com/MartijnKeesmaat/functional-programming/wiki/Quest-for-the-query) page.
 
-```
-query
-```
-
+### Data cleaning
+Since the data that is being retrieved doesn't need much cleaning, I decided to clean the survey data from another project. This is explained on the [data cleaning](https://github.com/MartijnKeesmaat/functional-programming/wiki/Data-cleaning-exercise) page.
 
 ## Tech stack
 
