@@ -218,6 +218,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = renderDonutChart;
 
+var _this = void 0;
+
 function renderDonutChart(categories, size, thickness) {
   // Setup
   var width = size,
@@ -234,7 +236,8 @@ function renderDonutChart(categories, size, thickness) {
   showDonutText(path);
   hideDonutText(path, colorPalette);
   path = addFillToDonut(path, arc, colorPalette);
-  addArcHover(path, colorPalette); // addDefaultText(g, 'ab');
+  addArcHover(path, colorPalette);
+  addDefaultText(g, categories);
 }
 
 var addGlobalSvg = function addGlobalSvg(width, height) {
@@ -296,12 +299,14 @@ var rotateArc = function rotateArc(svg, width, height) {
   return svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 };
 
-var addDefaultText = function addDefaultText(g, text) {
-  g.append('text').attr('text-anchor', 'middle').attr('dy', '.35em').attr('class', 'donut-title').text(text);
+var addDefaultText = function addDefaultText(g, categories) {
+  var defaultText = d3.select(_this).style("cursor", "pointer").append("g").attr("class", "default-text");
+  defaultText.append("text").attr("class", "donut-title").text(truncator(categories[0].name, 1)).attr('text-anchor', 'middle').attr('dy', '-0.2em');
+  defaultText.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dy', '1.5em');
 };
 
 var truncator = function truncator(str, words) {
-  return str.split(" ").splice(0, words).join(" ");
+  return str.split(/[, ]/).splice(0, words).join(" ");
 };
 },{}],"index.js":[function(require,module,exports) {
 "use strict";

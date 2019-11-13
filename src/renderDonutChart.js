@@ -17,8 +17,10 @@ export default function renderDonutChart(categories, size, thickness) {
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
 
-  // addDefaultText(g, 'ab');
+  addDefaultText(g, categories);
 }
+
+
 
 const addGlobalSvg = (width, height) => {
   return d3.select(".donut-chart")
@@ -110,17 +112,28 @@ const rotateArc = (svg, width, height) => {
     .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
 }
 
-const addDefaultText = (g, text) => {
-  g.append('text')
+const addDefaultText = (g, categories) => {
+  const defaultText = d3.select(this)
+    .style("cursor", "pointer")
+    .append("g")
+    .attr("class", "default-text");
+
+  defaultText.append("text")
+    .attr("class", "donut-title")
+    .text(truncator(categories[0].name, 1))
     .attr('text-anchor', 'middle')
-    .attr('dy', '.35em')
-    .attr('class', 'donut-title')
-    .text(text);
+    .attr('dy', '-0.2em');
+
+  defaultText.append("text")
+    .attr("class", "donut-sub-title")
+    .text('Categorie')
+    .attr('text-anchor', 'middle')
+    .attr('dy', '1.5em');
 }
 
 const truncator = (str, words) =>
   str
-    .split(" ")
+    .split(/[, ]/)
     .splice(0, words)
     .join(" ");
 
