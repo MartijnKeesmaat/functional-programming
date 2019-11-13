@@ -85,7 +85,7 @@ p {
   fill: #505D6F;
 }
 
-.donut-sub-title {
+.donut-chart .donut-sub-title {
   font-size: 14px;
 
   fill: #9AA1A9;

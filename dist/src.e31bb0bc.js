@@ -117,13 +117,55 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"renderBarChart.js":[function(require,module,exports) {
+})({"helpers.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.truncator = truncator;
+exports.wrap = wrap;
+
+function truncator(str, words) {
+  return str.split(/[, ]/).splice(0, words).join(" ");
+} // https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
+
+
+function wrap(text, width) {
+  text.each(function () {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1,
+        // ems
+    y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", "".concat(++lineNumber * lineHeight + dy, "em")).text(word);
+      }
+    }
+  });
+}
+},{}],"renderBarChart.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = renderBarChart;
+
+var _helpers = require("./helpers");
 
 function renderBarChart(categories, width, height) {
   var padding = 50;
@@ -163,7 +205,7 @@ var addLabelsToBarChart = function addLabelsToBarChart(svg, categories) {
   }).attr("y", function (d, i) {
     return i * 50 + 10;
   }).attr("class", "label").attr("dy", 0) //set the dy here
-  .attr("text-anchor", "end").attr("transform", "translate(90," + 0 + ")").call(wrap, 100);
+  .attr("text-anchor", "end").attr("transform", "translate(90," + 0 + ")").call(_helpers.wrap, 100);
 };
 
 var addXAxisToBarChart = function addXAxisToBarChart(svg, height, padding, xScale, categories) {
@@ -181,36 +223,8 @@ var addGridlinesToBarChart = function addGridlinesToBarChart(svg, width, height)
 
 var makeXGridlines = function makeXGridlines(x) {
   return d3.axisBottom(x).ticks(5);
-}; // https://bl.ocks.org/guypursey/f47d8cd11a8ff24854305505dbbd8c07
-
-
-function wrap(text, width) {
-  text.each(function () {
-    var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
-        word,
-        line = [],
-        lineNumber = 0,
-        lineHeight = 1.1,
-        // ems
-    y = text.attr("y"),
-        dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-
-    while (word = words.pop()) {
-      line.push(word);
-      tspan.text(line.join(" "));
-
-      if (tspan.node().getComputedTextLength() > width) {
-        line.pop();
-        tspan.text(line.join(" "));
-        line = [word];
-        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", "".concat(++lineNumber * lineHeight + dy, "em")).text(word);
-      }
-    }
-  });
-}
-},{}],"renderDonutChart.js":[function(require,module,exports) {
+};
+},{"./helpers":"helpers.js"}],"renderDonutChart.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -218,7 +232,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = renderDonutChart;
 
-var _this = void 0;
+var _helpers = require("./helpers");
 
 function renderDonutChart(categories, size, thickness) {
   // Setup
@@ -238,7 +252,13 @@ function renderDonutChart(categories, size, thickness) {
   path = addFillToDonut(path, arc, colorPalette);
   addArcHover(path, colorPalette);
   addDefaultText(g, categories);
-}
+} // CREATE DONUT
+
+
+var addColorPalette = function addColorPalette() {
+  var colorArr = ['#B83B5E', '#995A3A', '#F08A5D', '#F9D769', '#6A2C70'];
+  return d3.scaleOrdinal(colorArr);
+};
 
 var addGlobalSvg = function addGlobalSvg(width, height) {
   return d3.select(".donut-chart").append('svg').attr('class', 'pie').attr('width', width).attr('height', height);
@@ -248,9 +268,8 @@ var addArc = function addArc(thickness, radius) {
   return d3.arc().innerRadius(radius - thickness).outerRadius(radius);
 };
 
-var addColorPalette = function addColorPalette() {
-  var colorArr = ['#B83B5E', '#995A3A', '#F08A5D', '#F9D769', '#6A2C70'];
-  return d3.scaleOrdinal(colorArr);
+var rotateArc = function rotateArc(svg, width, height) {
+  return svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 };
 
 var addPieRadius = function addPieRadius() {
@@ -260,10 +279,24 @@ var addPieRadius = function addPieRadius() {
   }).sort(null);
 };
 
+var createArcPaths = function createArcPaths(g, pie, categories) {
+  return g.selectAll('path').data(pie(categories[0].materials)).enter().append("g");
+}; // INTERACTIONS
+
+
+var addDefaultText = function addDefaultText(g, categories) {
+  // const defaultText = d3.select(this)
+  //   .style("cursor", "pointer")
+  //   .attr("class", "default-text");
+  var f = g.append("g").attr('class', 'default-text');
+  f.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(categories[0].name, 1)).attr('text-anchor', 'middle').attr('dy', '-0.2em');
+  f.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dy', '1.5em');
+};
+
 var showDonutText = function showDonutText(el) {
   el.on("mouseover", function (d) {
     var g = d3.select(this).style("cursor", "pointer").append("g").attr("class", "text-group");
-    g.append("text").attr("class", "donut-title").text(truncator(d.data.name, 1)).attr('text-anchor', 'middle').attr('dy', '-0.2em');
+    g.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(d.data.name, 1)).attr('text-anchor', 'middle').attr('dy', '-0.2em');
     g.append("text").attr("class", "donut-sub-title").text(d.data.value).attr('text-anchor', 'middle').attr('dy', '1.5em');
   });
 };
@@ -289,26 +322,8 @@ var addArcHover = function addArcHover(path, colorPalette) {
   }).each(function (d, i) {
     this._current = i;
   });
-};
-
-var createArcPaths = function createArcPaths(g, pie, categories) {
-  return g.selectAll('path').data(pie(categories[0].materials)).enter().append("g");
-};
-
-var rotateArc = function rotateArc(svg, width, height) {
-  return svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-};
-
-var addDefaultText = function addDefaultText(g, categories) {
-  var defaultText = d3.select(_this).style("cursor", "pointer").append("g").attr("class", "default-text");
-  defaultText.append("text").attr("class", "donut-title").text(truncator(categories[0].name, 1)).attr('text-anchor', 'middle').attr('dy', '-0.2em');
-  defaultText.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dy', '1.5em');
-};
-
-var truncator = function truncator(str, words) {
-  return str.split(/[, ]/).splice(0, words).join(" ");
-};
-},{}],"index.js":[function(require,module,exports) {
+}; // Helpers
+},{"./helpers":"helpers.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _renderBarChart = _interopRequireDefault(require("./renderBarChart.js"));
@@ -378,7 +393,7 @@ function renderCharts(categories) {
   (0, _renderBarChart.default)(dataForFP, 600, 300);
   (0, _renderDonutChart.default)(categories, 260, 35);
 }
-},{"./renderBarChart.js":"renderBarChart.js","./renderDonutChart.js":"renderDonutChart.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./renderBarChart.js":"renderBarChart.js","./renderDonutChart.js":"renderDonutChart.js"}],"../../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -406,7 +421,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63511" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63745" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -582,5 +597,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
+},{}]},{},["../../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
 //# sourceMappingURL=/src.e31bb0bc.js.map

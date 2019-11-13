@@ -1,3 +1,5 @@
+import { truncator } from './helpers';
+
 export default function renderDonutChart(categories, size, thickness) {
   // Setup
   const width = size, height = size;
@@ -21,6 +23,11 @@ export default function renderDonutChart(categories, size, thickness) {
 }
 
 
+// CREATE DONUT
+const addColorPalette = () => {
+  const colorArr = ['#B83B5E', '#995A3A', '#F08A5D', '#F9D769', '#6A2C70'];
+  return d3.scaleOrdinal(colorArr);
+}
 
 const addGlobalSvg = (width, height) => {
   return d3.select(".donut-chart")
@@ -36,9 +43,9 @@ const addArc = (thickness, radius) => {
     .outerRadius(radius);
 }
 
-const addColorPalette = () => {
-  const colorArr = ['#B83B5E', '#995A3A', '#F08A5D', '#F9D769', '#6A2C70'];
-  return d3.scaleOrdinal(colorArr);
+const rotateArc = (svg, width, height) => {
+  return svg.append('g')
+    .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
 }
 
 const addPieRadius = () => {
@@ -46,6 +53,36 @@ const addPieRadius = () => {
   return d3.pie()
     .value(function (d) { return d.value; })
     .sort(null);
+}
+
+const createArcPaths = (g, pie, categories) => {
+  return g.selectAll('path')
+    .data(pie(categories[0].materials))
+    .enter()
+    .append("g")
+}
+
+
+// INTERACTIONS
+const addDefaultText = (g, categories) => {
+  // const defaultText = d3.select(this)
+  //   .style("cursor", "pointer")
+  //   .attr("class", "default-text");
+
+  const f = g.append("g")
+    .attr('class', 'default-text')
+
+  f.append("text")
+    .attr("class", "donut-title")
+    .text(truncator(categories[0].name, 1))
+    .attr('text-anchor', 'middle')
+    .attr('dy', '-0.2em')
+
+  f.append("text")
+    .attr("class", "donut-sub-title")
+    .text('Categorie')
+    .attr('text-anchor', 'middle')
+    .attr('dy', '1.5em');
 }
 
 const showDonutText = el => {
@@ -100,41 +137,5 @@ const addArcHover = (path, colorPalette) => {
     .each(function (d, i) { this._current = i; });
 }
 
-const createArcPaths = (g, pie, categories) => {
-  return g.selectAll('path')
-    .data(pie(categories[0].materials))
-    .enter()
-    .append("g")
-}
 
-const rotateArc = (svg, width, height) => {
-  return svg.append('g')
-    .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
-}
-
-const addDefaultText = (g, categories) => {
-  const defaultText = d3.select(this)
-    .style("cursor", "pointer")
-    .append("g")
-    .attr("class", "default-text");
-
-  defaultText.append("text")
-    .attr("class", "donut-title")
-    .text(truncator(categories[0].name, 1))
-    .attr('text-anchor', 'middle')
-    .attr('dy', '-0.2em');
-
-  defaultText.append("text")
-    .attr("class", "donut-sub-title")
-    .text('Categorie')
-    .attr('text-anchor', 'middle')
-    .attr('dy', '1.5em');
-}
-
-const truncator = (str, words) =>
-  str
-    .split(/[, ]/)
-    .splice(0, words)
-    .join(" ");
-
-
+// Helpers
