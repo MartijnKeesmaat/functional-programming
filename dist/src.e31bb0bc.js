@@ -252,6 +252,12 @@ var hideDonutText = function hideDonutText(el, colorPalette) {
   });
 };
 
+var addFillToDonut = function addFillToDonut(path, arc, colorPalette) {
+  return path.append('path').attr('d', arc).attr('fill', function (d, i) {
+    return colorPalette(i);
+  });
+};
+
 function renderDonutChart(categories) {
   var text = "";
   var width = 234;
@@ -267,11 +273,11 @@ function renderDonutChart(categories) {
   var path = g.selectAll('path').data(pie(categories[0].materials)).enter().append("g");
   showDonutText(path);
   hideDonutText(path, colorPalette);
-  path.append('path').attr('d', arc).attr('fill', function (d, i) {
-    return colorPalette(i);
-  }).on("mouseover", function (d) {
+  path = addFillToDonut(path, arc, colorPalette);
+  path.on("mouseover", function (d) {
     d3.select(this).style("cursor", "pointer").style("fill", "black");
-  }).on("mouseout", function (d) {
+  });
+  path.on("mouseout", function (d) {
     d3.select(this).style("cursor", "none").style("fill", colorPalette(this._current));
   }).each(function (d, i) {
     this._current = i;

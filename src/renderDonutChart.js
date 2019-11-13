@@ -55,6 +55,12 @@ const hideDonutText = (el, colorPalette) => {
   })
 }
 
+const addFillToDonut = (path, arc, colorPalette) => {
+  return path.append('path')
+    .attr('d', arc)
+    .attr('fill', (d, i) => colorPalette(i))
+}
+
 export default function renderDonutChart(categories) {
   const text = "";
 
@@ -74,7 +80,7 @@ export default function renderDonutChart(categories) {
 
   const pie = addPieRadius();
 
-  const path = g.selectAll('path')
+  let path = g.selectAll('path')
     .data(pie(categories[0].materials))
     .enter()
     .append("g")
@@ -82,14 +88,16 @@ export default function renderDonutChart(categories) {
   showDonutText(path);
   hideDonutText(path, colorPalette);
 
-  path.append('path')
-    .attr('d', arc)
-    .attr('fill', (d, i) => colorPalette(i))
+  path = addFillToDonut(path, arc, colorPalette);
+
+  path
     .on("mouseover", function (d) {
       d3.select(this)
         .style("cursor", "pointer")
         .style("fill", "black");
     })
+
+  path
     .on("mouseout", function (d) {
       d3.select(this)
         .style("cursor", "none")
