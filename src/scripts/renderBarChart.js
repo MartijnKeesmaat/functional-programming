@@ -30,7 +30,7 @@ const addBarsToBarChart = (xScale, svg, categories) => {
     .attr("width", d => xScale(d.value) - 50)
     .attr("height", 15)
     .attr("class", "bar")
-    .attr("rx", 15 / 2) //height / 2
+  // .attr("rx", 15 / 2) //height / 2
 }
 
 const addLabelsToBarChart = (svg, categories) => {

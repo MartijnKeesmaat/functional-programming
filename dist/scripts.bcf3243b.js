@@ -28858,7 +28858,7 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories) {
     return i * 50;
   }).attr("width", function (d) {
     return xScale(d.value) - 50;
-  }).attr("height", 15).attr("class", "bar").attr("rx", 15 / 2); //height / 2
+  }).attr("height", 15).attr("class", "bar"); // .attr("rx", 15 / 2) //height / 2
 };
 
 var addLabelsToBarChart = function addLabelsToBarChart(svg, categories) {
@@ -29113,7 +29113,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53275" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54063" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
