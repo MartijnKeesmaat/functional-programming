@@ -34,8 +34,8 @@ const addBarsToBarChart = (xScale, svg, categories, barheight, barSpacing) => {
     .attr("height", barheight)
     .attr("class", "bar")
 
-  d3.selectAll(".bar")._groups[0][0].style('fill', 'purple')
-  console.log()
+  // d3.selectAll(".bar")._groups[0][0].style('fill', 'purple')
+  // console.log()
 }
 
 const addLabelsToBarChart = (svg, categories, labelWidth, barSpacing) => {

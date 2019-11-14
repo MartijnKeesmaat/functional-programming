@@ -28860,11 +28860,8 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barh
     return i * barSpacing;
   }).attr("width", function (d) {
     return xScale(d.value);
-  }).attr("height", barheight).attr("class", "bar");
-
-  d3.selectAll(".bar")._groups[0][0].style('fill', 'purple');
-
-  console.log();
+  }).attr("height", barheight).attr("class", "bar"); // d3.selectAll(".bar")._groups[0][0].style('fill', 'purple')
+  // console.log()
 };
 
 var addLabelsToBarChart = function addLabelsToBarChart(svg, categories, labelWidth, barSpacing) {
