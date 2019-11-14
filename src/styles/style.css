@@ -25,11 +25,11 @@ body {
 }
 
 .bar-chart .bar:first-of-type {
-  /* fill: #6A2C70; */
+  fill: #6A2C70;
 }
 
 .bar-chart .bar:first-of-type:hover {
-  /* opacity: .8; */
+  fill: rgb(81, 34, 85);
 }
 
 
