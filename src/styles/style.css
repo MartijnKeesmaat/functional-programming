@@ -24,11 +24,11 @@ body {
   fill: #d9dce0;
 }
 
-.bar-chart .bar:first-of-type {
+.bar-chart .bar:nth-of-type(2) {
   fill: #6A2C70;
 }
 
-.bar-chart .bar:first-of-type:hover {
+.bar-chart .bar:nth-of-type(2):hover {
   fill: rgb(81, 34, 85);
 }
 
