@@ -28838,49 +28838,54 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function renderBarChart(categories, width, height) {
-  var padding = 50;
+  var barheight = 15;
+  var barSpacing = 50;
+  var labelWidth = 100;
   var svg = addGlobalSVGBarChart(width, height);
-  var xScale = addXScaleBarChart(width, padding, categories);
-  addLabelsToBarChart(svg, categories);
-  addXAxisToBarChart(svg, height, padding, xScale);
+  var xScale = addXScaleBarChart(width, barSpacing, categories);
+  addLabelsToBarChart(svg, categories, labelWidth, barSpacing);
+  addXAxisToBarChart(svg, height, barSpacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale);
-  addBarsToBarChart(xScale, svg, categories);
+  addBarsToBarChart(xScale, svg, categories, barheight, barSpacing);
 }
 
 var addGlobalSVGBarChart = function addGlobalSVGBarChart(width, height) {
   return d3.select(".bar-chart").append("svg").attr("width", width).attr("height", height);
 };
 
-var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories) {
+var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barheight, barSpacing) {
   svg.selectAll("rect").data(categories).enter().append("rect").attr("x", function (d, i) {
     return 100;
   }).attr("y", function (d, i) {
-    return i * 50;
+    return i * barSpacing;
   }).attr("width", function (d) {
-    return xScale(d.value) - 50;
-  }).attr("height", 15).attr("class", "bar"); // .attr("rx", 15 / 2) //height / 2
+    return xScale(d.value);
+  }).attr("height", barheight).attr("class", "bar");
+
+  d3.selectAll(".bar")._groups[0][0].style('fill', 'purple');
+
+  console.log();
 };
 
-var addLabelsToBarChart = function addLabelsToBarChart(svg, categories) {
+var addLabelsToBarChart = function addLabelsToBarChart(svg, categories, labelWidth, barSpacing) {
   svg.selectAll("text").data(categories).enter().append("text").text(function (d) {
     return (0, _helpers.capitalize)(d.name);
   }).attr("x", function (d, i) {
     return 0;
   }).attr("y", function (d, i) {
-    return i * 50 + 10;
-  }).attr("class", "label").attr("dy", 0) //set the dy here
-  .attr("text-anchor", "end").attr("transform", "translate(90," + 0 + ")").call(_helpers.wrap, 100);
+    return i * barSpacing + 10;
+  }).attr("class", "label").attr("dy", 0).attr("text-anchor", "end").attr("transform", "translate(90," + 0 + ")").call(_helpers.wrap, labelWidth);
 };
 
-var addXScaleBarChart = function addXScaleBarChart(width, padding, categories) {
+var addXScaleBarChart = function addXScaleBarChart(width, barSpacing, categories) {
   return d3.scaleLinear().domain([0, d3.max(categories, function (d) {
     return d.value;
-  })]).range([padding, width - padding]);
+  })]).range([barSpacing, width - barSpacing]);
 };
 
-var addXAxisToBarChart = function addXAxisToBarChart(svg, height, padding, xScale) {
+var addXAxisToBarChart = function addXAxisToBarChart(svg, height, barSpacing, xScale) {
   var xAxis = d3.axisBottom(xScale).ticks(4);
-  svg.append("g").attr("transform", "translate(50," + (height - padding) + ")").attr("color", '#9AA1A9').attr("class", "x-axis").call(xAxis).call(function (g) {
+  svg.append("g").attr("transform", "translate(50," + (height - barSpacing) + ")").attr("color", '#9AA1A9').attr("class", "x-axis").call(xAxis).call(function (g) {
     return g.select(".domain").remove();
   });
 };

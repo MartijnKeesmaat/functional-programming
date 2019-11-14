@@ -2,13 +2,16 @@ import * as d3 from "d3";
 import { wrap, capitalize } from "./helpers";
 
 export default function renderBarChart(categories, width, height) {
-  const padding = 50;
+  const barheight = 15;
+  const barSpacing = 50;
+  const labelWidth = 100;
+
   const svg = addGlobalSVGBarChart(width, height);
-  const xScale = addXScaleBarChart(width, padding, categories);
-  addLabelsToBarChart(svg, categories);
-  addXAxisToBarChart(svg, height, padding, xScale);
+  const xScale = addXScaleBarChart(width, barSpacing, categories);
+  addLabelsToBarChart(svg, categories, labelWidth, barSpacing);
+  addXAxisToBarChart(svg, height, barSpacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale)
-  addBarsToBarChart(xScale, svg, categories);
+  addBarsToBarChart(xScale, svg, categories, barheight, barSpacing);
 }
 
 const addGlobalSVGBarChart = (width, height) => {
@@ -19,21 +22,23 @@ const addGlobalSVGBarChart = (width, height) => {
     .attr("height", height);
 }
 
-const addBarsToBarChart = (xScale, svg, categories) => {
+const addBarsToBarChart = (xScale, svg, categories, barheight, barSpacing) => {
   svg
     .selectAll("rect")
     .data(categories)
     .enter()
     .append("rect")
     .attr("x", (d, i) => 100)
-    .attr("y", (d, i) => i * 50)
-    .attr("width", d => xScale(d.value) - 50)
-    .attr("height", 15)
+    .attr("y", (d, i) => i * barSpacing)
+    .attr("width", d => xScale(d.value))
+    .attr("height", barheight)
     .attr("class", "bar")
-  // .attr("rx", 15 / 2) //height / 2
+
+  d3.selectAll(".bar")._groups[0][0].style('fill', 'purple')
+  console.log()
 }
 
-const addLabelsToBarChart = (svg, categories) => {
+const addLabelsToBarChart = (svg, categories, labelWidth, barSpacing) => {
   svg
     .selectAll("text")
     .data(categories)
@@ -41,25 +46,25 @@ const addLabelsToBarChart = (svg, categories) => {
     .append("text")
     .text(d => capitalize(d.name))
     .attr("x", (d, i) => 0)
-    .attr("y", (d, i) => (i * 50) + 10)
+    .attr("y", (d, i) => (i * barSpacing) + 10)
     .attr("class", "label")
-    .attr("dy", 0)//set the dy here
+    .attr("dy", 0)
     .attr("text-anchor", "end")
     .attr("transform", "translate(90," + 0 + ")")
-    .call(wrap, 100);
+    .call(wrap, labelWidth);
 }
 
-const addXScaleBarChart = (width, padding, categories) => {
+const addXScaleBarChart = (width, barSpacing, categories) => {
   return d3
     .scaleLinear()
     .domain([0, d3.max(categories, d => d.value)])
-    .range([padding, width - padding]);
+    .range([barSpacing, width - barSpacing]);
 }
 
-const addXAxisToBarChart = (svg, height, padding, xScale) => {
+const addXAxisToBarChart = (svg, height, barSpacing, xScale) => {
   const xAxis = d3.axisBottom(xScale).ticks(4);
   svg.append("g")
-    .attr("transform", "translate(50," + (height - padding) + ")")
+    .attr("transform", "translate(50," + (height - barSpacing) + ")")
     .attr("color", '#9AA1A9')
     .attr("class", "x-axis")
     .call(xAxis)
