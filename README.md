@@ -2,11 +2,13 @@
 
 # 📈 NVWM Dashboard
 
-> The NVWM Dashboard is a project created for the [functional programming](https://github.com/cmda-tt/course-19-20/tree/master/functional-programming) of the [Amsterdam University of Applied Sciences](https://www.hva.nl/)
+The NVWM Dashboard is a project created for the [functional programming](https://github.com/cmda-tt/course-19-20/tree/master/functional-programming) of the [Amsterdam University of Applied Sciences](https://www.hva.nl/)
 
 In functional programming (fp) you learn how to create visualisations from external data, and how to clean and transform data, use svg, use d3, and specifically use d3’s scales. You additionally apply learning attained in frontend apps.
 
 For this project I created a dashboard which first shows the main categories of the [NMVW organisation](https://collectie.wereldculturen.nl/#/query/a399dc40-72c2-48e0-9675-654ffc84570f) and second the materials of their respective category. The categories are displayed in a bar chart. This chart shows 5 categories. If the user scrolls he/she can view all categories. The user will be greeted with the materials of a category when clicked on a bar in the bar chart.
+
+> Uitstekende documentatie, ik heb hier niets meer aan toe te voegen, veel succes morgen! [@roberrrt-s](https://github.com/MartijnKeesmaat/functional-programming/issues/24)
 
 ## Demo
 See the the live demo [here](https://functional-progammer.netlify.com/)
