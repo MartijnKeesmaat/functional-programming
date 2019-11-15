@@ -1,8 +1,9 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a77e8421-230a-49f8-96b9-327ef67bbe1a/deploy-status)](https://app.netlify.com/sites/boring-liskov-c16543/deploys)
 
 # 📈 NVWM Dashboard
+> Uitstekende documentatie, ik heb hier niets meer aan toe te voegen, veel succes morgen! [@roberrrt-s](https://github.com/MartijnKeesmaat/functional-programming/issues/24)
 
-> The NVWM Dashboard is a project created for the [functional programming](https://github.com/cmda-tt/course-19-20/tree/master/functional-programming) of the [Amsterdam University of Applied Sciences](https://www.hva.nl/)
+The NVWM Dashboard is a project created for the [functional programming](https://github.com/cmda-tt/course-19-20/tree/master/functional-programming) of the [Amsterdam University of Applied Sciences](https://www.hva.nl/)
 
 In functional programming (fp) you learn how to create visualisations from external data, and how to clean and transform data, use svg, use d3, and specifically use d3’s scales. You additionally apply learning attained in frontend apps.
 
