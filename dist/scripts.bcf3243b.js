@@ -28860,8 +28860,7 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barh
     return i * barSpacing;
   }).attr("width", function (d) {
     return xScale(d.value);
-  }).attr("height", barheight).attr("class", "bar"); // d3.selectAll(".bar")._groups[0][0].style('fill', 'purple')
-  // console.log()
+  }).attr("height", barheight).attr("class", "bar");
 };
 
 var addLabelsToBarChart = function addLabelsToBarChart(svg, categories, labelWidth, barSpacing) {
@@ -28990,7 +28989,7 @@ var addLegend = function addLegend(categories, colorPalette) {
 var showCategoryText = function showCategoryText(el) {
   el.on("mouseover", function (d) {
     d3.select('.donut-title').text((0, _helpers.truncator)(d.data.name, 1));
-    d3.select('.donut-sub-title').text(d.data.value);
+    d3.select('.donut-sub-title').text("".concat(d.data.value, " objecten"));
   });
 };
 

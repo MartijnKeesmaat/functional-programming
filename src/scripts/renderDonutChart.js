@@ -117,7 +117,7 @@ const addLegend = (categories, colorPalette) => {
 const showCategoryText = el => {
   el.on("mouseover", function (d) {
     d3.select('.donut-title').text(truncator(d.data.name, 1));
-    d3.select('.donut-sub-title').text(d.data.value);
+    d3.select('.donut-sub-title').text(`${d.data.value} objecten`);
   })
 }
 
