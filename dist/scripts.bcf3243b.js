@@ -28895,136 +28895,93 @@ var addGridlinesToBarChart = function addGridlinesToBarChart(svg, width, height,
 var makeXGridlines = function makeXGridlines(x) {
   return d3.axisBottom(x).ticks(4);
 };
-},{"d3":"../node_modules/d3/index.js","./helpers":"scripts/helpers.js"}],"scripts/renderDonutChart.js":[function(require,module,exports) {
+},{"d3":"../node_modules/d3/index.js","./helpers":"scripts/helpers.js"}],"scripts/donutTest.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = renderDonutChart;
+exports.default = doStuff;
 
 var d3 = _interopRequireWildcard(require("d3"));
-
-var _helpers = require("./helpers");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function renderDonutChart(categories, size, thickness) {
-  // Setup
-  var width = size,
-      height = size;
-  var radius = Math.min(width, height) / 2;
-  var colorPalette = addColorPalette(); // Create donut
-
-  var svg = addGlobalSvg(width + 180, height + 30);
-  var arc = addArc(thickness, radius);
-  var g = rotateArc(svg, width, height);
-  var pie = addPieRadius();
-  var path = createArcPaths(g, pie, categories);
-  addLegend(categories, colorPalette); // Interactions
-
-  showCategoryText(path);
-  resetDonutText(path, categories);
-  path = addFillToDonut(path, arc, colorPalette);
-  addArcHover(path, colorPalette);
-  addDefaultText(categories, width, height);
-} // CREATE DONUT
-
-
-var addColorPalette = function addColorPalette() {
-  var colorArr = ['#B83B5E', '#995A3A', '#F08A5D', '#F9D769', '#6A2C70'];
-  return d3.scaleOrdinal(colorArr);
-};
-
-var addGlobalSvg = function addGlobalSvg(width, height) {
-  return d3.select(".donut-chart").append('svg').attr('class', 'pie').attr('width', width).attr('height', height);
-};
-
-var addArc = function addArc(thickness, radius) {
-  return d3.arc().innerRadius(radius - thickness).outerRadius(radius);
-};
-
-var rotateArc = function rotateArc(svg, width, height) {
-  return svg.append('g').attr('transform', 'translate(' + (width / 2 + 180) + ',' + height / 2 + ')');
-};
-
-var addPieRadius = function addPieRadius() {
-  // transform the value of each group to a radius that will be displayed on the chart.
-  return d3.pie().value(function (d) {
+function doStuff(categories) {
+  var svg = d3.select(".donut-chart").append("svg").attr('width', 900).attr('height', 500).append("g");
+  svg.append("g").attr("class", "slices");
+  svg.append("g").attr("class", "labels");
+  svg.append("g").attr("class", "lines");
+  var width = 960,
+      height = 450,
+      radius = Math.min(width, height) / 2;
+  var pie = d3.pie().sort(null).value(function (d) {
     return d.value;
-  }).sort(null);
-};
+  });
+  var arc = d3.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.4);
+  var outerArc = d3.arc().innerRadius(radius * 0.9).outerRadius(radius * 0.9);
+  svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-var createArcPaths = function createArcPaths(g, pie, categories) {
-  return g.selectAll('path').data(pie(categories[1].materials)).enter().append("g");
-};
+  var key = function key(d) {
+    return d.data.label;
+  };
 
-function addDefaultText(categories, width, height) {
-  var defaultText = d3.select('.pie').append("g").attr('class', 'default-text');
-  defaultText.append("text").attr("class", "donut-title").text((0, _helpers.truncator)(categories[1].name, 1)).attr('text-anchor', 'middle').attr('dx', width / 2 + 180).attr('dy', height / 2);
-  defaultText.append("text").attr("class", "donut-sub-title").text('Categorie').attr('text-anchor', 'middle').attr('dx', width / 2 + 180).attr('dy', height / 2 + 20);
+  var color = d3.scaleOrdinal().domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing"]).range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+  function randomData(index) {
+    var labels = color.domain();
+    return labels.map(function (label, i) {
+      return {
+        label: label,
+        value: categories[index].materials[i].value
+      };
+    });
+  }
+
+  change(randomData(0));
+  var counter = 0;
+  d3.select(".randomize").on("click", function () {
+    counter++;
+    console.log('categorie', categories[counter].name);
+    console.log('material 0', categories[counter].materials[0].value);
+    console.log('material 1', categories[counter].materials[1].value);
+    console.log('material 2', categories[counter].materials[2].value);
+    console.log('material 3', categories[counter].materials[3].value);
+    console.log('material 4', categories[counter].materials[4].value);
+    change(randomData(counter));
+  });
+
+  function change(data) {
+    /* ------- PIE SLICES -------*/
+    var slice = svg.select(".slices").selectAll("path.slice").data(pie(data), key);
+    slice.enter().insert("path").style("fill", function (d) {
+      return color(d.data.label);
+    }).attr("class", "slice");
+    slice.transition().duration(1000).attrTween("d", function (d) {
+      this._current = this._current || d;
+      var interpolate = d3.interpolate(this._current, d);
+      this._current = interpolate(0);
+      return function (t) {
+        return arc(interpolate(t));
+      };
+    });
+    slice.exit().remove();
+  }
+
+  ;
 }
-
-var addLegend = function addLegend(categories, colorPalette) {
-  var legend = d3.select('.pie').append("g").attr('class', 'legend');
-  legend.selectAll("text").data(categories[1].materials).enter().append("text").text(function (d) {
-    return (0, _helpers.capitalize)(d.name);
-  }).attr("x", function (d, i) {
-    return 14;
-  }).attr("y", function (d, i) {
-    return 140 + 50 * (i / 1.7);
-  }).attr("class", "legend-label");
-  legend.selectAll("circle").data(categories[1].materials).enter().append("circle").attr("r", 4).attr("cx", function (d, i) {
-    return 4;
-  }).attr("cy", function (d, i) {
-    return 140 + 50 * (i / 1.7) - 4;
-  }).attr("class", "legend-color").attr('fill', function (d, i) {
-    return colorPalette(i);
-  });
-}; // INTERACTIONS
-
-
-var showCategoryText = function showCategoryText(el) {
-  el.on("mouseover", function (d) {
-    d3.select('.donut-title').text((0, _helpers.truncator)(d.data.name, 1));
-    d3.select('.donut-sub-title').text("".concat(d.data.value, " objecten"));
-  });
-};
-
-var resetDonutText = function resetDonutText(el, categories) {
-  el.on("mouseout", function () {
-    d3.select('.donut-title').text((0, _helpers.truncator)(categories[1].name, 1));
-    d3.select('.donut-sub-title').text('Categorie');
-  });
-};
-
-var addFillToDonut = function addFillToDonut(path, arc, colorPalette) {
-  return path.append('path').attr('d', arc).attr('fill', function (d, i) {
-    return colorPalette(i);
-  });
-};
-
-var addArcHover = function addArcHover(path, colorPalette) {
-  path.on("mouseover", function (d) {
-    d3.select(this).style("cursor", "pointer").style("fill", (0, _helpers.shadeColor)(colorPalette(this._current), -20));
-  });
-  path.on("mouseout", function (d) {
-    d3.select(this).style("cursor", "none").style("fill", colorPalette(this._current));
-  }).each(function (d, i) {
-    this._current = i;
-  });
-};
-},{"d3":"../node_modules/d3/index.js","./helpers":"scripts/helpers.js"}],"scripts/index.js":[function(require,module,exports) {
+},{"d3":"../node_modules/d3/index.js"}],"scripts/index.js":[function(require,module,exports) {
 "use strict";
 
-var _renderBarChart = _interopRequireDefault(require("./renderBarChart.js"));
+var _renderBarChart = _interopRequireDefault(require("./renderBarChart"));
 
-var _renderDonutChart = _interopRequireDefault(require("./renderDonutChart.js"));
+var _donutTest = _interopRequireDefault(require("./donutTest"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import renderDonutChart from './renderDonutChart.js'
 var categoryCounter = 0;
 var nCategories = 19;
 var categories = [];
@@ -29083,10 +29040,11 @@ var normalizeMaterialPerCategory = function normalizeMaterialPerCategory(data, c
 
 function renderCharts(categories) {
   var dataForFP = categories.slice(0, 5);
-  (0, _renderBarChart.default)(dataForFP, 600, 300);
-  (0, _renderDonutChart.default)(categories, 240, 35, 200);
+  (0, _renderBarChart.default)(dataForFP, 600, 300); // renderDonutChart(categories, 240, 35, 200);
+
+  (0, _donutTest.default)(categories);
 }
-},{"./renderBarChart.js":"scripts/renderBarChart.js","./renderDonutChart.js":"scripts/renderDonutChart.js"}],"../../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./renderBarChart":"scripts/renderBarChart.js","./donutTest":"scripts/donutTest.js"}],"../../../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -29114,7 +29072,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54063" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61706" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
