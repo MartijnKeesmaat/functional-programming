@@ -1,14 +1,14 @@
 import * as d3 from "d3";
 import { wrap, capitalize } from "./helpers";
 
-const donutColorPalette = ["#98abc5", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]
 
 export default function renderBarChart(categories, width, height) {
   const donutConfig = {
     width: 500,
     height: 400,
     outerRing: 0.8,
-    innerRing: 0.6
+    innerRing: 0.6,
+    colors: ["#98abc5", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]
   }
 
   // Donut setup
@@ -23,8 +23,8 @@ export default function renderBarChart(categories, width, height) {
   addDonutLabels(donutContainer, categories)
 
   // Render donut
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutColorPalette, arc);
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutColorPalette, arc);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutConfig.colors, arc);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutConfig.colors, arc);
 
 
   // Add Bar Chart
@@ -40,7 +40,7 @@ export default function renderBarChart(categories, width, height) {
   addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale)
 
-  addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, donutColorPalette, arc);
+  addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, donutConfig.colors, arc);
 }
 
 

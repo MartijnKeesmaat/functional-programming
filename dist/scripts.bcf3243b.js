@@ -28837,14 +28837,13 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-var donutColorPalette = ["#98abc5", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"];
-
 function renderBarChart(categories, width, height) {
   var donutConfig = {
     width: 500,
     height: 400,
     outerRing: 0.8,
-    innerRing: 0.6
+    innerRing: 0.6,
+    colors: ["#98abc5", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]
   }; // Donut setup
 
   var donutContainer = createDonutContainer(donutConfig.width, donutConfig.height);
@@ -28856,8 +28855,8 @@ function renderBarChart(categories, width, height) {
 
   addDonutLabels(donutContainer, categories); // Render donut
 
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutColorPalette, arc);
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutColorPalette, arc); // Add Bar Chart
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutConfig.colors, arc);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutConfig.colors, arc); // Add Bar Chart
 
   var barConfig = {
     height: 15,
@@ -28869,7 +28868,7 @@ function renderBarChart(categories, width, height) {
   addLabelsToBarChart(svg, categories, barConfig.labelWidth, barConfig.spacing);
   addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale);
-  addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, donutColorPalette, arc);
+  addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, donutConfig.colors, arc);
 }
 
 function getCurrentDonutData(index, categories) {
