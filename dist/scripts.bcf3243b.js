@@ -28986,7 +28986,7 @@ function getArc(radius, outerRing, innerRing) {
 
 function positionDonutChart(donutContainer) {
   donutContainer.attr("transform", "translate(" + 200 + "," + 200 + ")");
-} // https://stackoverflow.com/questions/28390754/get-one-element-from-d3js-selection-by-index
+} // stackoverflow.com/questions/28390754/get-one-element-from-d3js-selection-by-index
 
 
 function addActiveClassToBar(index) {
