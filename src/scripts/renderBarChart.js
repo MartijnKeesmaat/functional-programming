@@ -103,8 +103,12 @@ const addBarsToBarChart = (xScale, svg, categories, barheight, barSpacing, donut
     .attr("height", barheight)
     .attr("class", "bar")
     .on('mouseenter', function (d, i) {
+      d3.selectAll('.bar').classed("active", false);
+      d3.select(this).classed("active", true);
       updateDonutChart(getCurrentDonutData(i, categories), donutContainer, pie, key, color, arc);
     });
+
+  addActiveClassToBar(0); // add active class to first item
 }
 
 const addLabelsToBarChart = (svg, categories, labelWidth, barSpacing) => {
@@ -180,7 +184,6 @@ function createDonutContainer(width, height) {
     .append("g")
 }
 
-
 // TODO move these donut function to the external file
 function addSlicesToDonutContrainer(donutContainer) {
   donutContainer.append("g")
@@ -204,4 +207,9 @@ function getArc(radius, outerRing, innerRing) {
 // TODO this number should equal donut width + border
 function positionDonutChart(donutContainer) {
   donutContainer.attr("transform", "translate(" + 200 + "," + 200 + ")");
+}
+
+// https://stackoverflow.com/questions/28390754/get-one-element-from-d3js-selection-by-index
+function addActiveClassToBar(index) {
+  d3.selectAll('.bar').filter((d, i) => i === index).classed('active', true);
 }

@@ -20,17 +20,16 @@ body {
 
 .bar:hover {
   cursor: pointer;
-
-  fill: #d9dce0;
 }
 
-.bar-chart .bar:nth-of-type(2) {
+.active {
   fill: #6A2C70;
 }
 
-.bar-chart .bar:nth-of-type(2):hover {
+
+/* .bar-chart .bar:nth-of-type(2):hover {
   fill: rgb(81, 34, 85);
-}
+} */
 
 
 .donut-chart {

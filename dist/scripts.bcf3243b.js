@@ -28913,8 +28913,11 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barh
   }).attr("width", function (d) {
     return xScale(d.value);
   }).attr("height", barheight).attr("class", "bar").on('mouseenter', function (d, i) {
+    d3.selectAll('.bar').classed("active", false);
+    d3.select(this).classed("active", true);
     updateDonutChart(getCurrentDonutData(i, categories), donutContainer, pie, key, color, arc);
   });
+  addActiveClassToBar(0); // add active class to first item
 };
 
 var addLabelsToBarChart = function addLabelsToBarChart(svg, categories, labelWidth, barSpacing) {
@@ -28983,6 +28986,13 @@ function getArc(radius, outerRing, innerRing) {
 
 function positionDonutChart(donutContainer) {
   donutContainer.attr("transform", "translate(" + 200 + "," + 200 + ")");
+} // https://stackoverflow.com/questions/28390754/get-one-element-from-d3js-selection-by-index
+
+
+function addActiveClassToBar(index) {
+  d3.selectAll('.bar').filter(function (d, i) {
+    return i === index;
+  }).classed('active', true);
 }
 },{"d3":"../node_modules/d3/index.js","./helpers":"scripts/helpers.js"}],"scripts/donutTest.js":[function(require,module,exports) {
 "use strict";
