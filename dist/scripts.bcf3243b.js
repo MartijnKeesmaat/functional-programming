@@ -28837,7 +28837,10 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
+var color = d3.scaleOrdinal().domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing"]).range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
 function renderBarChart(categories, width, height) {
+  // bar chart
   var barheight = 15;
   var barSpacing = 50;
   var labelWidth = 100;
@@ -28846,63 +28849,39 @@ function renderBarChart(categories, width, height) {
   addLabelsToBarChart(svg, categories, labelWidth, barSpacing);
   addXAxisToBarChart(svg, height, barSpacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale);
-  var donutContainer = d3.select(".donut-chart").append("svg").attr('width', 900).attr('height', 500).append("g");
-  donutContainer.append("g").attr("class", "slices");
-  donutContainer.append("g").attr("class", "labels");
-  donutContainer.append("g").attr("class", "lines");
-  var width = 960,
-      height = 450,
-      radius = Math.min(width, height) / 2;
-  var pie = d3.pie().sort(null).value(function (d) {
-    return d.value;
-  });
-  var arc = d3.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.4);
-  var outerArc = d3.arc().innerRadius(radius * 0.9).outerRadius(radius * 0.9);
-  donutContainer.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  var donutContainer = createDonutContainer();
+  addSlicesToDonutContrainer(donutContainer);
+  var donutConfig = {
+    width: 960,
+    height: 450
+  };
+  var radius = Math.min(donutConfig.width, donutConfig.height) / 2;
+  var pie = getPies();
+  var arc = getArc(radius);
+  positionDonutChart(donutContainer);
 
   var key = function key(d) {
     return d.data.label;
   };
 
-  var color = d3.scaleOrdinal().domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing"]).range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-  function randomData(index) {
-    var labels = color.domain();
-    return labels.map(function (label, i) {
-      return {
-        label: label,
-        value: categories[index].materials[i].value
-      };
-    });
-  }
-
-  change(randomData(0), donutContainer, pie, key, color, arc);
-  change(randomData(0), donutContainer, pie, key, color, arc);
-  setTimeout(function () {
-    change(randomData(1), donutContainer, pie, key, color, arc);
-  }, 1000);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
   addBarsToBarChart(xScale, svg, categories, barheight, barSpacing, donutContainer, pie, key, color, arc);
+  addDonutLabels(donutContainer, categories);
 }
 
-function donuts(categories, counter) {// let counter = 0;
-  // d3.select(".randomize")
-  //   .on("click", function () {
-  //     // counter++
-  //     console.log('categorie', categories[counter].name)
-  //     console.log('material 0', categories[counter].materials[0].value)
-  //     console.log('material 1', categories[counter].materials[1].value)
-  //     console.log('material 2', categories[counter].materials[2].value)
-  //     console.log('material 3', categories[counter].materials[3].value)
-  //     console.log('material 4', categories[counter].materials[4].value)
-  //     change(randomData(counter, donutContainer));
-  //   });
+function getCurrentDonutData(index, categories) {
+  var labels = color.domain();
+  return labels.map(function (label, i) {
+    return {
+      label: label,
+      value: categories[index].materials[i].value,
+      name: categories[index].materials[i].name
+    };
+  });
 }
 
-function change(data, donutContainer, pie, key, color, arc) {
-  // console.log('here', donutContainer)
-
-  /* ------- PIE SLICES -------*/
-  console.log(donutContainer);
+function updateDonutChart(data, donutContainer, pie, key, color, arc) {
   var slice = donutContainer.select(".slices").selectAll("path.slice").data(pie(data), key);
   slice.enter().insert("path").style("fill", function (d) {
     return color(d.data.label);
@@ -28925,22 +28904,6 @@ var addGlobalSVGBarChart = function addGlobalSVGBarChart(width, height) {
 };
 
 var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barheight, barSpacing, donutContainer, pie, key, color, arc) {
-  var dummyData = [{
-    label: "Lorem ipsum",
-    value: 83289
-  }, {
-    label: "dolor sit",
-    value: 44680
-  }, {
-    label: "amet",
-    value: 42831
-  }, {
-    label: "consectetur",
-    value: 40747
-  }, {
-    label: "adipisicing",
-    value: 30276
-  }];
   svg.selectAll("rect").data(categories).enter().append("rect").attr("x", function (d, i) {
     return 100;
   }).attr("y", function (d, i) {
@@ -28948,9 +28911,7 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barh
   }).attr("width", function (d) {
     return xScale(d.value);
   }).attr("height", barheight).attr("class", "bar").on('click', function (d, i) {
-    console.log('You clicked on bar ' + i);
-    console.log(donutContainer);
-    change(dummyData, donutContainer, pie, key, color, arc);
+    updateDonutChart(getCurrentDonutData(i, categories), donutContainer, pie, key, color, arc);
   });
 };
 
@@ -28986,6 +28947,40 @@ var addGridlinesToBarChart = function addGridlinesToBarChart(svg, width, height,
 var makeXGridlines = function makeXGridlines(x) {
   return d3.axisBottom(x).ticks(4);
 };
+
+function addDonutLabels(donutContainer, categories) {
+  var labels = donutContainer.append("g").attr("class", "labels");
+  labels.selectAll("text").data(categories[1].materials).enter().append("text").text(function (d) {
+    return d.name;
+  }).attr("x", function (d, i) {
+    return 0;
+  }).attr("y", function (d, i) {
+    return i * 20;
+  }).attr("class", "legend-label");
+}
+
+function createDonutContainer() {
+  return d3.select(".donut-chart").append("svg").attr('width', 900).attr('height', 500).append("g");
+} // TODO move these donut function to the external file
+
+
+function addSlicesToDonutContrainer(donutContainer) {
+  donutContainer.append("g").attr("class", "slices");
+}
+
+function getPies() {
+  return d3.pie().sort(null).value(function (d) {
+    return d.value;
+  });
+}
+
+function getArc(radius) {
+  return d3.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.5);
+}
+
+function positionDonutChart(donutContainer) {
+  donutContainer.attr("transform", "translate(" + 150 + "," + 150 + ")");
+}
 },{"d3":"../node_modules/d3/index.js","./helpers":"scripts/helpers.js"}],"scripts/donutTest.js":[function(require,module,exports) {
 "use strict";
 
