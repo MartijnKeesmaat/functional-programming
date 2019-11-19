@@ -110,7 +110,11 @@ function renderCharts(categories) {
   const dataForFP = categories.slice(0, 5);
   renderBarChart(dataForFP, 600, 300);
   // renderDonutChart(categories, 240, 35, 200);
-  donutTest(categories)
+  donutTest(categories, 0);
+
+  setTimeout(() => {
+    donutTest(categories, 1);
+  }, 1000)
 }
 
 
