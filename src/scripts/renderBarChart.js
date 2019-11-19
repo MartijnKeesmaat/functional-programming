@@ -3,11 +3,35 @@ import { wrap, capitalize } from "./helpers";
 
 var color = d3.scaleOrdinal()
   .domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing"])
-  .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+  .range(["#98abc5", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
 
 export default function renderBarChart(categories, width, height) {
+  const donutConfig = {
+    width: 500,
+    height: 400,
+    outerRing: 0.8,
+    innerRing: 0.6
+  }
 
-  // bar chart
+  // Donut setup
+  const donutContainer = createDonutContainer(donutConfig.width, donutConfig.height);
+  addSlicesToDonutContrainer(donutContainer);
+  const radius = Math.min(donutConfig.width, donutConfig.height) / 2
+  const pie = getPies()
+  const arc = getArc(radius, donutConfig.outerRing, donutConfig.innerRing);
+  positionDonutChart(donutContainer);
+  const key = function (d) { return d.data.label; };
+
+  // Add legend 
+  addDonutLabels(donutContainer, categories)
+
+  // Render donut
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
+
+
+  // Add Bar Chart
   const barConfig = {
     height: 15,
     spacing: 50,
@@ -20,30 +44,7 @@ export default function renderBarChart(categories, width, height) {
   addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale)
 
-
-  const donutConfig = {
-    width: 500,
-    height: 400,
-    outerRing: 0.8,
-    innerRing: 0.6
-  }
-
-  const donutContainer = createDonutContainer(donutConfig.width, donutConfig.height);
-  addSlicesToDonutContrainer(donutContainer);
-
-  const radius = Math.min(donutConfig.width, donutConfig.height) / 2
-  const pie = getPies()
-  const arc = getArc(radius, donutConfig.outerRing, donutConfig.innerRing);
-  positionDonutChart(donutContainer);
-  const key = function (d) { return d.data.label; };
-
-  // Render donut
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
-
   addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, key, color, arc);
-
-  addDonutLabels(donutContainer, categories)
 }
 
 
@@ -70,7 +71,7 @@ function updateDonutChart(data, donutContainer, pie, key, color, arc) {
     .attr("class", "slice");
 
   slice
-    .transition().duration(1000)
+    .transition().duration(500)
     .attrTween("d", function (d) {
       this._current = this._current || d;
       var interpolate = d3.interpolate(this._current, d);
@@ -105,7 +106,7 @@ const addBarsToBarChart = (xScale, svg, categories, barheight, barSpacing, donut
     .attr("width", d => xScale(d.value))
     .attr("height", barheight)
     .attr("class", "bar")
-    .on('click', function (d, i) {
+    .on('mouseenter', function (d, i) {
       updateDonutChart(getCurrentDonutData(i, categories), donutContainer, pie, key, color, arc);
     });
 }

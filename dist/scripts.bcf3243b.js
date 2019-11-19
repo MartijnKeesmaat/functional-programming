@@ -28837,10 +28837,33 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-var color = d3.scaleOrdinal().domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing"]).range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+var color = d3.scaleOrdinal().domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing"]).range(["#98abc5", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
 function renderBarChart(categories, width, height) {
-  // bar chart
+  var donutConfig = {
+    width: 500,
+    height: 400,
+    outerRing: 0.8,
+    innerRing: 0.6
+  }; // Donut setup
+
+  var donutContainer = createDonutContainer(donutConfig.width, donutConfig.height);
+  addSlicesToDonutContrainer(donutContainer);
+  var radius = Math.min(donutConfig.width, donutConfig.height) / 2;
+  var pie = getPies();
+  var arc = getArc(radius, donutConfig.outerRing, donutConfig.innerRing);
+  positionDonutChart(donutContainer);
+
+  var key = function key(d) {
+    return d.data.label;
+  }; // Add legend 
+
+
+  addDonutLabels(donutContainer, categories); // Render donut
+
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc); // Add Bar Chart
+
   var barConfig = {
     height: 15,
     spacing: 50,
@@ -28851,28 +28874,7 @@ function renderBarChart(categories, width, height) {
   addLabelsToBarChart(svg, categories, barConfig.labelWidth, barConfig.spacing);
   addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale);
-  var donutConfig = {
-    width: 500,
-    height: 400,
-    outerRing: 0.8,
-    innerRing: 0.6
-  };
-  var donutContainer = createDonutContainer(donutConfig.width, donutConfig.height);
-  addSlicesToDonutContrainer(donutContainer);
-  var radius = Math.min(donutConfig.width, donutConfig.height) / 2;
-  var pie = getPies();
-  var arc = getArc(radius, donutConfig.outerRing, donutConfig.innerRing);
-  positionDonutChart(donutContainer);
-
-  var key = function key(d) {
-    return d.data.label;
-  }; // Render donut
-
-
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
   addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, key, color, arc);
-  addDonutLabels(donutContainer, categories);
 }
 
 function getCurrentDonutData(index, categories) {
@@ -28891,7 +28893,7 @@ function updateDonutChart(data, donutContainer, pie, key, color, arc) {
   slice.enter().insert("path").style("fill", function (d) {
     return color(d.data.label);
   }).attr("class", "slice");
-  slice.transition().duration(1000).attrTween("d", function (d) {
+  slice.transition().duration(500).attrTween("d", function (d) {
     this._current = this._current || d;
     var interpolate = d3.interpolate(this._current, d);
     this._current = interpolate(0);
@@ -28915,7 +28917,7 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barh
     return i * barSpacing;
   }).attr("width", function (d) {
     return xScale(d.value);
-  }).attr("height", barheight).attr("class", "bar").on('click', function (d, i) {
+  }).attr("height", barheight).attr("class", "bar").on('mouseenter', function (d, i) {
     updateDonutChart(getCurrentDonutData(i, categories), donutContainer, pie, key, color, arc);
   });
 };
