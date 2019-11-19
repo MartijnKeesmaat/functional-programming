@@ -28856,18 +28856,20 @@ function renderBarChart(categories, width, height) {
   addDonutLabels(donutContainer, categories); // Render donut
 
   updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutConfig.colors, arc);
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutConfig.colors, arc); // Add Bar Chart
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutConfig.colors, arc); // Add Bar Chart config
 
   var barConfig = {
     height: 15,
     spacing: 50,
     labelWidth: 100
-  };
+  }; // Bar chart set up
+
   var svg = addGlobalSVGBarChart(width, height);
   var xScale = addXScaleBarChart(width, barConfig.spacing, categories);
   addLabelsToBarChart(svg, categories, barConfig.labelWidth, barConfig.spacing);
   addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
-  addGridlinesToBarChart(svg, width, height, xScale);
+  addGridlinesToBarChart(svg, width, height, xScale); // also stores event for donut chart
+
   addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, donutConfig.colors, arc);
 }
 

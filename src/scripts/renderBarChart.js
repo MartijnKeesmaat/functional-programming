@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import { wrap, capitalize } from "./helpers";
 
-
 export default function renderBarChart(categories, width, height) {
   const donutConfig = {
     width: 500,
@@ -27,19 +26,21 @@ export default function renderBarChart(categories, width, height) {
   updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutConfig.colors, arc);
 
 
-  // Add Bar Chart
+  // Add Bar Chart config
   const barConfig = {
     height: 15,
     spacing: 50,
     labelWidth: 100
   }
 
+  // Bar chart set up
   const svg = addGlobalSVGBarChart(width, height);
   const xScale = addXScaleBarChart(width, barConfig.spacing, categories);
   addLabelsToBarChart(svg, categories, barConfig.labelWidth, barConfig.spacing);
   addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale)
 
+  // also stores event for donut chart
   addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, donutConfig.colors, arc);
 }
 
