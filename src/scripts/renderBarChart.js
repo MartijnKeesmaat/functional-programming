@@ -1,10 +1,7 @@
 import * as d3 from "d3";
 import { wrap, capitalize } from "./helpers";
 
-var color = d3.scaleOrdinal()
-  .domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing"])
-  .range(["#98abc5", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
+const donutColorPalette = ["#98abc5", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]
 
 export default function renderBarChart(categories, width, height) {
   const donutConfig = {
@@ -21,14 +18,13 @@ export default function renderBarChart(categories, width, height) {
   const pie = getPies()
   const arc = getArc(radius, donutConfig.outerRing, donutConfig.innerRing);
   positionDonutChart(donutContainer);
-  const key = function (d) { return d.data.label; };
 
   // Add legend 
   addDonutLabels(donutContainer, categories)
 
   // Render donut
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
-  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutColorPalette, arc);
+  updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, donutColorPalette, arc);
 
 
   // Add Bar Chart
@@ -44,14 +40,12 @@ export default function renderBarChart(categories, width, height) {
   addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale)
 
-  addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, key, color, arc);
+  addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, donutColorPalette, arc);
 }
 
 
 function getCurrentDonutData(index, categories) {
-  var labels = color.domain();
-
-  return labels.map(function (label, i) {
+  return categories[index].materials.map(function (label, i) {
     return {
       label: label,
       value: categories[index].materials[i].value,
@@ -60,14 +54,15 @@ function getCurrentDonutData(index, categories) {
   });
 }
 
-function updateDonutChart(data, donutContainer, pie, key, color, arc) {
+function updateDonutChart(data, donutContainer, pie, color, arc) {
 
-  var slice = donutContainer.select(".slices").selectAll("path.slice")
-    .data(pie(data), key);
+  const slice = donutContainer.select(".slices")
+    .selectAll("path.slice")
+    .data(pie(data));
 
   slice.enter()
     .insert("path")
-    .style("fill", function (d) { return color(d.data.label); })
+    .style("fill", (d, i) => color[i])
     .attr("class", "slice");
 
   slice
