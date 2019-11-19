@@ -28846,11 +28846,6 @@ function renderBarChart(categories, width, height) {
   addLabelsToBarChart(svg, categories, labelWidth, barSpacing);
   addXAxisToBarChart(svg, height, barSpacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale);
-  addBarsToBarChart(xScale, svg, categories, barheight, barSpacing);
-  donuts(categories, 0);
-}
-
-function donuts(categories, counter) {
   var donutContainer = d3.select(".donut-chart").append("svg").attr('width', 900).attr('height', 500).append("g");
   donutContainer.append("g").attr("class", "slices");
   donutContainer.append("g").attr("class", "labels");
@@ -28881,12 +28876,15 @@ function donuts(categories, counter) {
     });
   }
 
-  console.log(donutContainer);
   change(randomData(0), donutContainer, pie, key, color, arc);
   change(randomData(0), donutContainer, pie, key, color, arc);
   setTimeout(function () {
     change(randomData(1), donutContainer, pie, key, color, arc);
-  }, 1000); // let counter = 0;
+  }, 1000);
+  addBarsToBarChart(xScale, svg, categories, barheight, barSpacing, donutContainer, pie, key, color, arc);
+}
+
+function donuts(categories, counter) {// let counter = 0;
   // d3.select(".randomize")
   //   .on("click", function () {
   //     // counter++
@@ -28904,6 +28902,7 @@ function change(data, donutContainer, pie, key, color, arc) {
   // console.log('here', donutContainer)
 
   /* ------- PIE SLICES -------*/
+  console.log(donutContainer);
   var slice = donutContainer.select(".slices").selectAll("path.slice").data(pie(data), key);
   slice.enter().insert("path").style("fill", function (d) {
     return color(d.data.label);
@@ -28925,7 +28924,23 @@ var addGlobalSVGBarChart = function addGlobalSVGBarChart(width, height) {
   return d3.select(".bar-chart").append("svg").attr("width", width).attr("height", height);
 };
 
-var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barheight, barSpacing) {
+var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barheight, barSpacing, donutContainer, pie, key, color, arc) {
+  var dummyData = [{
+    label: "Lorem ipsum",
+    value: 83289
+  }, {
+    label: "dolor sit",
+    value: 44680
+  }, {
+    label: "amet",
+    value: 42831
+  }, {
+    label: "consectetur",
+    value: 40747
+  }, {
+    label: "adipisicing",
+    value: 30276
+  }];
   svg.selectAll("rect").data(categories).enter().append("rect").attr("x", function (d, i) {
     return 100;
   }).attr("y", function (d, i) {
@@ -28934,6 +28949,8 @@ var addBarsToBarChart = function addBarsToBarChart(xScale, svg, categories, barh
     return xScale(d.value);
   }).attr("height", barheight).attr("class", "bar").on('click', function (d, i) {
     console.log('You clicked on bar ' + i);
+    console.log(donutContainer);
+    change(dummyData, donutContainer, pie, key, color, arc);
   });
 };
 

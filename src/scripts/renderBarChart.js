@@ -11,11 +11,6 @@ export default function renderBarChart(categories, width, height) {
   addLabelsToBarChart(svg, categories, labelWidth, barSpacing);
   addXAxisToBarChart(svg, height, barSpacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale)
-  addBarsToBarChart(xScale, svg, categories, barheight, barSpacing);
-  donuts(categories, 0)
-}
-
-function donuts(categories, counter) {
 
   var donutContainer = d3.select(".donut-chart")
     .append("svg")
@@ -67,13 +62,19 @@ function donuts(categories, counter) {
   }
 
 
-  console.log(donutContainer)
   change(randomData(0), donutContainer, pie, key, color, arc);
   change(randomData(0), donutContainer, pie, key, color, arc);
 
   setTimeout(() => {
     change(randomData(1), donutContainer, pie, key, color, arc);
   }, 1000)
+
+  addBarsToBarChart(xScale, svg, categories, barheight, barSpacing, donutContainer, pie, key, color, arc);
+}
+
+function donuts(categories, counter) {
+
+
 
 
 
@@ -99,6 +100,9 @@ function donuts(categories, counter) {
 function change(data, donutContainer, pie, key, color, arc) {
   // console.log('here', donutContainer)
   /* ------- PIE SLICES -------*/
+
+  console.log(donutContainer);
+
   var slice = donutContainer.select(".slices").selectAll("path.slice")
     .data(pie(data), key);
 
@@ -131,7 +135,16 @@ const addGlobalSVGBarChart = (width, height) => {
     .attr("height", height);
 }
 
-const addBarsToBarChart = (xScale, svg, categories, barheight, barSpacing) => {
+const addBarsToBarChart = (xScale, svg, categories, barheight, barSpacing, donutContainer, pie, key, color, arc) => {
+
+  const dummyData = [
+    { label: "Lorem ipsum", value: 83289 },
+    { label: "dolor sit", value: 44680 },
+    { label: "amet", value: 42831 },
+    { label: "consectetur", value: 40747 },
+    { label: "adipisicing", value: 30276 }
+  ]
+
   svg
     .selectAll("rect")
     .data(categories)
@@ -144,6 +157,8 @@ const addBarsToBarChart = (xScale, svg, categories, barheight, barSpacing) => {
     .attr("class", "bar")
     .on('click', function (d, i) {
       console.log('You clicked on bar ' + i)
+      console.log(donutContainer)
+      change(dummyData, donutContainer, pie, key, color, arc);
     });
 }
 
