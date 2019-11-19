@@ -8,37 +8,44 @@ var color = d3.scaleOrdinal()
 export default function renderBarChart(categories, width, height) {
 
   // bar chart
-  const barheight = 15;
-  const barSpacing = 50;
-  const labelWidth = 100;
+  const barConfig = {
+    height: 15,
+    spacing: 50,
+    labelWidth: 100
+  }
 
   const svg = addGlobalSVGBarChart(width, height);
-  const xScale = addXScaleBarChart(width, barSpacing, categories);
-  addLabelsToBarChart(svg, categories, labelWidth, barSpacing);
-  addXAxisToBarChart(svg, height, barSpacing, xScale);
+  const xScale = addXScaleBarChart(width, barConfig.spacing, categories);
+  addLabelsToBarChart(svg, categories, barConfig.labelWidth, barConfig.spacing);
+  addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
   addGridlinesToBarChart(svg, width, height, xScale)
 
-  const donutContainer = createDonutContainer();
-  addSlicesToDonutContrainer(donutContainer);
 
   const donutConfig = {
-    width: 960,
-    height: 450,
+    width: 500,
+    height: 400,
+    outerRing: 0.8,
+    innerRing: 0.6
   }
+
+  const donutContainer = createDonutContainer(donutConfig.width, donutConfig.height);
+  addSlicesToDonutContrainer(donutContainer);
+
   const radius = Math.min(donutConfig.width, donutConfig.height) / 2
   const pie = getPies()
-  const arc = getArc(radius);
-
+  const arc = getArc(radius, donutConfig.outerRing, donutConfig.innerRing);
   positionDonutChart(donutContainer);
-
   const key = function (d) { return d.data.label; };
 
+  // Render donut
   updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
   updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
-  addBarsToBarChart(xScale, svg, categories, barheight, barSpacing, donutContainer, pie, key, color, arc);
+
+  addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, key, color, arc);
 
   addDonutLabels(donutContainer, categories)
 }
+
 
 function getCurrentDonutData(index, categories) {
   var labels = color.domain();
@@ -168,11 +175,11 @@ function addDonutLabels(donutContainer, categories) {
     .attr("class", "legend-label")
 }
 
-function createDonutContainer() {
+function createDonutContainer(width, height) {
   return d3.select(".donut-chart")
     .append("svg")
-    .attr('width', 900)
-    .attr('height', 500)
+    .attr('width', width)
+    .attr('height', height)
     .append("g")
 }
 
@@ -191,12 +198,13 @@ function getPies() {
     });
 }
 
-function getArc(radius) {
+function getArc(radius, outerRing, innerRing) {
   return d3.arc()
-    .outerRadius(radius * 0.8)
-    .innerRadius(radius * 0.5);
+    .outerRadius(radius * outerRing)
+    .innerRadius(radius * innerRing);
 }
 
+// TODO this number should equal donut width + border
 function positionDonutChart(donutContainer) {
-  donutContainer.attr("transform", "translate(" + 150 + "," + 150 + ")");
+  donutContainer.attr("transform", "translate(" + 200 + "," + 200 + ")");
 }

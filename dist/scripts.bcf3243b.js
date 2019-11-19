@@ -28841,32 +28841,37 @@ var color = d3.scaleOrdinal().domain(["Lorem ipsum", "dolor sit", "amet", "conse
 
 function renderBarChart(categories, width, height) {
   // bar chart
-  var barheight = 15;
-  var barSpacing = 50;
-  var labelWidth = 100;
-  var svg = addGlobalSVGBarChart(width, height);
-  var xScale = addXScaleBarChart(width, barSpacing, categories);
-  addLabelsToBarChart(svg, categories, labelWidth, barSpacing);
-  addXAxisToBarChart(svg, height, barSpacing, xScale);
-  addGridlinesToBarChart(svg, width, height, xScale);
-  var donutContainer = createDonutContainer();
-  addSlicesToDonutContrainer(donutContainer);
-  var donutConfig = {
-    width: 960,
-    height: 450
+  var barConfig = {
+    height: 15,
+    spacing: 50,
+    labelWidth: 100
   };
+  var svg = addGlobalSVGBarChart(width, height);
+  var xScale = addXScaleBarChart(width, barConfig.spacing, categories);
+  addLabelsToBarChart(svg, categories, barConfig.labelWidth, barConfig.spacing);
+  addXAxisToBarChart(svg, height, barConfig.spacing, xScale);
+  addGridlinesToBarChart(svg, width, height, xScale);
+  var donutConfig = {
+    width: 500,
+    height: 400,
+    outerRing: 0.8,
+    innerRing: 0.6
+  };
+  var donutContainer = createDonutContainer(donutConfig.width, donutConfig.height);
+  addSlicesToDonutContrainer(donutContainer);
   var radius = Math.min(donutConfig.width, donutConfig.height) / 2;
   var pie = getPies();
-  var arc = getArc(radius);
+  var arc = getArc(radius, donutConfig.outerRing, donutConfig.innerRing);
   positionDonutChart(donutContainer);
 
   var key = function key(d) {
     return d.data.label;
-  };
+  }; // Render donut
+
 
   updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
   updateDonutChart(getCurrentDonutData(0, categories), donutContainer, pie, key, color, arc);
-  addBarsToBarChart(xScale, svg, categories, barheight, barSpacing, donutContainer, pie, key, color, arc);
+  addBarsToBarChart(xScale, svg, categories, barConfig.height, barConfig.spacing, donutContainer, pie, key, color, arc);
   addDonutLabels(donutContainer, categories);
 }
 
@@ -28959,8 +28964,8 @@ function addDonutLabels(donutContainer, categories) {
   }).attr("class", "legend-label");
 }
 
-function createDonutContainer() {
-  return d3.select(".donut-chart").append("svg").attr('width', 900).attr('height', 500).append("g");
+function createDonutContainer(width, height) {
+  return d3.select(".donut-chart").append("svg").attr('width', width).attr('height', height).append("g");
 } // TODO move these donut function to the external file
 
 
@@ -28974,12 +28979,13 @@ function getPies() {
   });
 }
 
-function getArc(radius) {
-  return d3.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.5);
-}
+function getArc(radius, outerRing, innerRing) {
+  return d3.arc().outerRadius(radius * outerRing).innerRadius(radius * innerRing);
+} // TODO this number should equal donut width + border
+
 
 function positionDonutChart(donutContainer) {
-  donutContainer.attr("transform", "translate(" + 150 + "," + 150 + ")");
+  donutContainer.attr("transform", "translate(" + 200 + "," + 200 + ")");
 }
 },{"d3":"../node_modules/d3/index.js","./helpers":"scripts/helpers.js"}],"scripts/donutTest.js":[function(require,module,exports) {
 "use strict";
